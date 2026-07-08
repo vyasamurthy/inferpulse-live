@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InferPulse™ — AMD AI Factory Intelligence & Workload Economics</title>
+<meta name="description" content="InferPulse™ tells you whether your AMD AI factory investment is working. WEI, behavioral drift, portfolio intelligence, and factory-level economics for AMD Instinct clusters.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:   #060810;
+  --panel:   #0D1320;
+  --border:  #1A2540;
+  --text:    #E2E8F0;
+  --dim:     #8892A4;
+  --gold:    #FFB800;
+  --green:   #00FF88;
+  --teal:    #00D4FF;
+  --blue:    #0EA5E9;
+  --purple:  #8B5CF6;
+  --red:     #FF4455;
+  --amber:   #F59E0B;
+  --amd:     #ED1C24;
+  --mono:    'IBM Plex Mono', monospace;
+  --sans:    'Inter', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--black);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+
+/* ── NAV ──────────────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(6,8,16,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px;
+}
+.nav-logo { font-family: var(--mono); font-size: 16px; font-weight: 700; color: var(--gold); letter-spacing: -0.02em; }
+.nav-logo span { color: var(--dim); font-weight: 400; }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a { font-size: 12px; color: var(--dim); font-family: var(--mono); letter-spacing: 0.05em; transition: color .2s; }
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  background: var(--gold); color: #000; font-family: var(--mono);
+  font-size: 11px; font-weight: 700; padding: 7px 18px; border-radius: 6px;
+  letter-spacing: 0.05em; transition: opacity .2s;
+}
+.nav-cta:hover { opacity: 0.88; }
+
+/* ── HERO ─────────────────────────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  padding: 120px 40px 80px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.hero-eyebrow {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.hero-eyebrow::before { content: ""; display: block; width: 32px; height: 1px; background: var(--gold); }
+.hero-headline {
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+.hero-headline em { color: var(--gold); font-style: normal; }
+.hero-sub {
+  font-size: 17px; color: var(--dim); line-height: 1.7;
+  max-width: 480px; margin-bottom: 36px;
+}
+.hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--gold); color: #000; font-family: var(--mono);
+  font-size: 12px; font-weight: 700; padding: 12px 24px; border-radius: 8px;
+  letter-spacing: 0.05em; transition: all .2s; border: none; cursor: pointer;
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,184,0,0.3); }
+.btn-secondary {
+  background: transparent; color: var(--text); font-family: var(--mono);
+  font-size: 12px; font-weight: 600; padding: 12px 24px; border-radius: 8px;
+  letter-spacing: 0.05em; border: 1px solid var(--border); cursor: pointer; transition: all .2s;
+}
+.btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+.hero-meta {
+  display: flex; gap: 28px; margin-top: 40px; flex-wrap: wrap;
+}
+.hero-meta-item { display: flex; flex-direction: column; }
+.hero-meta-val {
+  font-family: var(--mono); font-size: 26px; font-weight: 700; color: var(--gold);
+}
+.hero-meta-label { font-size: 11px; color: var(--dim); margin-top: 2px; }
+
+/* ── LIVE FACTORY SCORE ─────────────────────────────────────────── */
+.factory-score-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.factory-score-card::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--teal), var(--green));
+}
+.score-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 20px;
+}
+.score-label { font-family: var(--mono); font-size: 10px; color: var(--dim); letter-spacing: 0.15em; }
+.live-badge {
+  font-family: var(--mono); font-size: 9px; font-weight: 700; color: var(--green);
+  background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.3);
+  padding: 3px 8px; border-radius: 4px; letter-spacing: 0.1em;
+  display: flex; align-items: center; gap: 5px;
+}
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(0.8)} }
+
+.grade-display {
+  display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px;
+}
+.grade-letter {
+  font-family: var(--mono); font-size: 72px; font-weight: 700;
+  color: var(--green); line-height: 1;
+}
+.grade-wei {
+  display: flex; flex-direction: column;
+}
+.wei-val { font-family: var(--mono); font-size: 28px; font-weight: 700; color: var(--green); }
+.wei-label { font-size: 11px; color: var(--dim); }
+
+/* AIM bars */
+.aim-bars { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+.aim-bar-row { display: flex; align-items: center; gap: 8px; }
+.aim-bar-name { font-family: var(--mono); font-size: 10px; color: var(--dim); width: 88px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aim-bar-track { flex: 1; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; }
+.aim-bar-fill { height: 100%; border-radius: 3px; transition: width 1.5s cubic-bezier(0.4,0,0.2,1); }
+.aim-bar-val { font-family: var(--mono); font-size: 10px; width: 36px; text-align: right; flex-shrink: 0; }
+.aim-class { font-family: var(--mono); font-size: 8px; font-weight: 700; padding: 1px 5px; border-radius: 3px; flex-shrink: 0; }
+
+.portfolio-strip {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 6px;
+  padding-top: 14px; border-top: 1px solid var(--border);
+}
+.port-cell { text-align: center; }
+.port-count { font-family: var(--mono); font-size: 18px; font-weight: 700; }
+.port-label { font-family: var(--mono); font-size: 8px; color: var(--dim); }
+
+/* ── SECTION BASE ────────────────────────────────────────────────── */
+.section { padding: 80px 40px; max-width: 1280px; margin: 0 auto; }
+.section-full { padding: 80px 40px; background: var(--panel); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.section-full .inner { max-width: 1280px; margin: 0 auto; }
+.section-eyebrow {
+  font-family: var(--mono); font-size: 10px; color: var(--gold); letter-spacing: 0.2em;
+  text-transform: uppercase; margin-bottom: 12px;
+}
+.section-title { font-size: clamp(24px,3vw,38px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 14px; }
+.section-sub { font-size: 16px; color: var(--dim); max-width: 560px; line-height: 1.7; margin-bottom: 48px; }
+
+/* ── WEI EXPLAINER ───────────────────────────────────────────────── */
+.wei-explainer {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+}
+.wei-formula-box {
+  background: var(--black); border: 1px solid var(--border); border-radius: 12px; padding: 32px;
+  font-family: var(--mono);
+}
+.wei-formula {
+  font-size: clamp(20px,2.5vw,30px); font-weight: 700; color: var(--gold);
+  text-align: center; margin-bottom: 20px; line-height: 1.4;
+}
+.wei-formula-parts { display: flex; flex-direction: column; gap: 10px; }
+.wei-part {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px; border-radius: 6px; background: rgba(255,255,255,0.03);
+  border-left: 3px solid;
+}
+.wei-part-name { font-size: 12px; }
+.wei-part-val { font-size: 16px; font-weight: 700; }
+.wei-right { display: flex; flex-direction: column; gap: 16px; }
+.wei-point { display: flex; gap: 16px; align-items: flex-start; }
+.wei-point-icon {
+  width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 14px; font-weight: 700;
+}
+.wei-point-title { font-weight: 700; margin-bottom: 4px; }
+.wei-point-body { font-size: 14px; color: var(--dim); line-height: 1.6; }
+
+/* ── CAPABILITY GRID ─────────────────────────────────────────────── */
+.cap-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+.cap-card {
+  background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+  padding: 24px; transition: border-color .2s, transform .2s;
+}
+.cap-card:hover { border-color: rgba(255,184,0,0.4); transform: translateY(-2px); }
+.cap-icon {
+  font-family: var(--mono); font-size: 11px; font-weight: 700;
+  color: var(--gold); background: rgba(255,184,0,0.08);
+  border: 1px solid rgba(255,184,0,0.2); border-radius: 6px;
+  padding: 4px 10px; display: inline-block; margin-bottom: 14px;
+  letter-spacing: 0.1em;
+}
+.cap-title { font-weight: 700; font-size: 16px; margin-bottom: 8px; }
+.cap-body { font-size: 13px; color: var(--dim); line-height: 1.6; }
+.cap-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+.cap-tag {
+  font-family: var(--mono); font-size: 9px; color: var(--dim);
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  padding: 2px 7px; border-radius: 3px;
+}
+
+/* ── INTERACTIVE DRIFT PANEL ─────────────────────────────────────── */
+.drift-demo {
+  background: var(--black); border: 1px solid var(--border); border-radius: 16px;
+  overflow: hidden;
+}
+.drift-demo-header {
+  background: var(--panel); border-bottom: 1px solid var(--border);
+  padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;
+}
+.drift-demo-title { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--text); }
+.drift-demo-sub { font-family: var(--mono); font-size: 10px; color: var(--dim); }
+.drift-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 0; }
+.drift-cell {
+  padding: 16px 20px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .15s;
+}
+.drift-cell:hover { background: rgba(255,255,255,0.02); }
+.drift-cell:nth-child(even) { border-right: none; }
+.drift-cell-name { font-family: var(--mono); font-size: 11px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+.drift-dim-bars { display: flex; flex-direction: column; gap: 4px; }
+.drift-dim { display: flex; align-items: center; gap: 6px; }
+.drift-dim-label { font-family: var(--mono); font-size: 8px; color: var(--dim); width: 80px; flex-shrink: 0; }
+.drift-dim-track { flex: 1; height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; }
+.drift-dim-fill { height: 100%; border-radius: 2px; }
+.drift-dim-val { font-family: var(--mono); font-size: 9px; color: var(--dim); width: 28px; text-align: right; }
+
+/* ── PORTFOLIO MATRIX ────────────────────────────────────────────── */
+.portfolio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.port-quad {
+  border-radius: 12px; padding: 20px; border: 2px solid;
+}
+.port-quad-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.port-quad-label { font-family: var(--mono); font-size: 13px; font-weight: 700; }
+.port-quad-count { font-family: var(--mono); font-size: 36px; font-weight: 700; opacity: 0.25; }
+.port-quad-desc { font-size: 12px; color: var(--dim); margin-bottom: 10px; }
+.port-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.port-chip {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  padding: 3px 9px; border-radius: 4px; border: 1px solid;
+}
+
+/* ── REPORT CARDS ─────────────────────────────────────────────────── */
+.report-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.report-card {
+  background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+  padding: 20px; transition: all .2s; cursor: pointer;
+}
+.report-card:hover { transform: translateY(-3px); }
+.report-icon { font-family: var(--mono); font-size: 10px; font-weight: 700; margin-bottom: 10px; }
+.report-title { font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+.report-desc { font-size: 12px; color: var(--dim); line-height: 1.5; }
+.report-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  margin-top: 12px; color: var(--gold);
+}
+
+/* ── TENSORWAVE SECTION ──────────────────────────────────────────── */
+.tw-hero {
+  background: linear-gradient(135deg, rgba(255,184,0,0.06) 0%, rgba(14,165,233,0.04) 100%);
+  border: 1px solid rgba(255,184,0,0.2); border-radius: 16px; padding: 40px;
+  display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center;
+}
+.tw-grade { font-family: var(--mono); font-size: 80px; font-weight: 700; color: var(--gold); line-height: 1; }
+.tw-stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 20px; }
+.tw-stat { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 12px 14px; }
+.tw-stat-val { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--teal); display: block; margin-bottom: 3px; }
+.tw-stat-label { font-size: 10px; color: var(--dim); }
+.tw-tenants { display: flex; flex-direction: column; gap: 8px; min-width: 260px; }
+.tw-tenant {
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px 12px;
+}
+.tw-tenant-name { font-family: var(--mono); font-size: 11px; color: var(--text); font-weight: 600; }
+.tw-tenant-grade { font-family: var(--mono); font-size: 16px; font-weight: 700; }
+
+/* ── AMD SECTION ─────────────────────────────────────────────────── */
+.amd-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+.amd-card {
+  background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+  padding: 18px;
+}
+.amd-card-chip {
+  font-family: var(--mono); font-size: 9px; font-weight: 700; color: var(--amd);
+  background: rgba(237,28,36,0.08); border: 1px solid rgba(237,28,36,0.2);
+  padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 10px;
+  letter-spacing: 0.1em;
+}
+.amd-card-title { font-weight: 700; font-size: 14px; margin-bottom: 5px; }
+.amd-card-body { font-size: 12px; color: var(--dim); line-height: 1.5; }
+
+/* ── SCORE DECOMP DEMO ───────────────────────────────────────────── */
+.score-demo {
+  background: var(--black); border: 1px solid var(--border); border-radius: 16px;
+  overflow: hidden;
+}
+.score-demo-header {
+  background: var(--panel); border-bottom: 1px solid var(--border);
+  padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;
+}
+.score-aim-tabs { display: flex; gap: 6px; padding: 16px 20px 0; flex-wrap: wrap; }
+.score-aim-tab {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  padding: 4px 12px; border-radius: 4px; cursor: pointer; transition: all .15s;
+  border: 1px solid var(--border); color: var(--dim); background: transparent;
+}
+.score-aim-tab.active { background: rgba(255,184,0,0.1); border-color: var(--gold); color: var(--gold); }
+.score-breakdown { padding: 20px; }
+.score-big { display: flex; align-items: flex-end; gap: 12px; margin-bottom: 20px; }
+.score-num { font-family: var(--mono); font-size: 56px; font-weight: 700; line-height: 1; }
+.score-grade-badge {
+  font-family: var(--mono); font-size: 24px; font-weight: 700;
+  width: 44px; height: 44px; border-radius: 8px; display: flex; align-items: center;
+  justify-content: center; border: 2px solid; margin-bottom: 4px;
+}
+.score-dims { display: flex; flex-direction: column; gap: 10px; }
+.score-dim-row { display: flex; align-items: center; gap: 10px; }
+.score-dim-name { font-family: var(--mono); font-size: 10px; color: var(--dim); width: 160px; flex-shrink: 0; }
+.score-dim-track { flex: 1; height: 7px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+.score-dim-fill { height: 100%; border-radius: 4px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
+.score-dim-num { font-family: var(--mono); font-size: 12px; font-weight: 700; width: 32px; text-align: right; }
+.score-dim-weight { font-family: var(--mono); font-size: 9px; color: var(--dim); width: 40px; text-align: right; }
+
+/* ── CTA STRIP ──────────────────────────────────────────────────── */
+.cta-strip {
+  background: linear-gradient(135deg, rgba(255,184,0,0.08) 0%, rgba(0,212,255,0.04) 100%);
+  border-top: 1px solid rgba(255,184,0,0.15);
+  border-bottom: 1px solid rgba(255,184,0,0.15);
+  padding: 70px 40px; text-align: center;
+}
+.cta-strip h2 { font-size: clamp(24px,3vw,40px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 14px; }
+.cta-strip p { font-size: 17px; color: var(--dim); margin-bottom: 32px; max-width: 560px; margin-left: auto; margin-right: auto; }
+.cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.cta-detail { font-family: var(--mono); font-size: 11px; color: var(--dim); margin-top: 16px; }
+
+/* ── FOOTER ──────────────────────────────────────────────────────── */
+footer {
+  background: var(--panel); border-top: 1px solid var(--border);
+  padding: 40px; display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 20px;
+}
+.footer-logo { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--gold); }
+.footer-meta { font-family: var(--mono); font-size: 11px; color: var(--dim); text-align: right; line-height: 1.8; }
+.footer-amd-badge {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  color: var(--amd); background: rgba(237,28,36,0.08);
+  border: 1px solid rgba(237,28,36,0.25); padding: 6px 14px; border-radius: 6px;
+}
+
+/* ── DIVIDER ─────────────────────────────────────────────────────── */
+.divider {
+  width: 100%; height: 1px; background: var(--border);
+  max-width: 1280px; margin: 0 auto;
+}
+.scroll-hint {
+  text-align: center; font-family: var(--mono); font-size: 10px; color: var(--dim);
+  padding: 16px 0; letter-spacing: 0.1em;
+  animation: bobble 2s ease-in-out infinite;
+}
+@keyframes bobble { 0%,100%{transform:translateY(0)} 50%{transform:translateY(4px)} }
+
+/* ── RESPONSIVE ──────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; padding: 100px 20px 60px; }
+  .cap-grid { grid-template-columns: 1fr; }
+  .report-grid { grid-template-columns: 1fr 1fr; }
+  .amd-grid { grid-template-columns: 1fr 1fr; }
+  .portfolio-grid { grid-template-columns: 1fr; }
+  .tw-hero { grid-template-columns: 1fr; }
+  .wei-explainer { grid-template-columns: 1fr; }
+  .drift-grid { grid-template-columns: 1fr; }
+  .section { padding: 60px 20px; }
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+}
+@media (max-width: 600px) {
+  .report-grid { grid-template-columns: 1fr; }
+  .amd-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">InferPulse<span>™</span></div>
+  <div class="nav-links">
+    <a href="#wei">WEI</a>
+    <a href="#capabilities">Capabilities</a>
+    <a href="#portfolio">Portfolio</a>
+    <a href="#reports">Reports</a>
+    <a href="#tensorwave">TensorWave</a>
+    <a href="#amd">AMD Native</a>
+  </div>
+  <a href="mailto:vyasa.murthy@venture-vertex.com?subject=InferPulse Demo Request" class="nav-cta">Request Demo</a>
+</nav>
+
+<!-- HERO -->
+<div style="max-width:1280px;margin:0 auto">
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">AMD AI Factory Intelligence</div>
+      <h1 class="hero-headline">
+        Does your AMD<br>AI factory <em>pay</em>?
+      </h1>
+      <p class="hero-sub">
+        InferPulse™ measures the economic output of every AI inference microservice on your AMD cluster — and tells you which ones to scale, fix, or stop.
+      </p>
+      <div class="hero-buttons">
+        <a href="mailto:vyasa.murthy@venture-vertex.com?subject=InferPulse Demo Request - AMD Advancing AI" class="btn-primary">Request Demo at AMD Advancing AI</a>
+        <a href="#wei" class="btn-secondary">See WEI →</a>
+      </div>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="hero-meta-val" id="heroAims">12</span>
+          <span class="hero-meta-label">AIMs monitored</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-val">692</span>
+          <span class="hero-meta-label">Frameworks</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-val" id="heroValue">$2.1M</span>
+          <span class="hero-meta-label">Monthly value tracked</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-val">8,192</span>
+          <span class="hero-meta-label">MI325X GPUs</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live factory score card -->
+    <div class="factory-score-card">
+      <div class="score-header">
+        <div class="score-label">FACTORY ECONOMICS — LIVE DEMO</div>
+        <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+      </div>
+      <div class="grade-display">
+        <div class="grade-letter" id="heroGrade">B</div>
+        <div class="grade-wei">
+          <div class="wei-val" id="heroWei">1.14</div>
+          <div class="wei-label">Factory WEI</div>
+        </div>
+      </div>
+      <div class="aim-bars" id="aimBars">
+        <!-- populated by JS -->
+      </div>
+      <div class="portfolio-strip">
+        <div class="port-cell"><div class="port-count" style="color:#00FF88" id="scaleCount">3</div><div class="port-label">SCALE</div></div>
+        <div class="port-cell"><div class="port-count" style="color:#0EA5E9" id="maintCount">5</div><div class="port-label">MAINTAIN</div></div>
+        <div class="port-cell"><div class="port-count" style="color:#F59E0B" id="optCount">3</div><div class="port-label">OPTIMIZE</div></div>
+        <div class="port-cell"><div class="port-count" style="color:#FF4455" id="killCount">1</div><div class="port-label">KILL</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="scroll-hint">↓ scroll to explore</div>
+
+<!-- WEI EXPLAINER -->
+<div class="section-full" id="wei">
+  <div class="inner">
+    <div class="section-eyebrow">The Core Metric</div>
+    <div class="wei-explainer">
+      <div>
+        <h2 class="section-title">Workload Economic Index</h2>
+        <p class="section-sub">WEI is the ratio of value your AI produces to what it costs. Every AIM gets a WEI score every 5 seconds. Below 1.0, you're losing money. Above 1.2, you're in the Scale zone.</p>
+        <div class="wei-right">
+          <div class="wei-point">
+            <div class="wei-point-icon" style="background:rgba(0,255,136,0.1);color:#00FF88">1.4+</div>
+            <div>
+              <div class="wei-point-title" style="color:#00FF88">SCALE — increase GPU allocation</div>
+              <div class="wei-point-body">Value production significantly exceeds cost. These AIMs are your most profitable workloads.</div>
+            </div>
+          </div>
+          <div class="wei-point">
+            <div class="wei-point-icon" style="background:rgba(14,165,233,0.1);color:#0EA5E9">1.0+</div>
+            <div>
+              <div class="wei-point-title" style="color:#0EA5E9">MAINTAIN — monitor weekly</div>
+              <div class="wei-point-body">Stable positive economics. No action required. Watch for drift that could push into Optimize.</div>
+            </div>
+          </div>
+          <div class="wei-point">
+            <div class="wei-point-icon" style="background:rgba(245,158,11,0.1);color:#F59E0B">0.6+</div>
+            <div>
+              <div class="wei-point-title" style="color:#F59E0B">OPTIMIZE — investigate root cause</div>
+              <div class="wei-point-body">Declining WEI. Behavioral drift or SLA breach is eroding value. Remediation recommended.</div>
+            </div>
+          </div>
+          <div class="wei-point">
+            <div class="wei-point-icon" style="background:rgba(255,68,85,0.1);color:#FF4455">&lt;0.6</div>
+            <div>
+              <div class="wei-point-title" style="color:#FF4455">KILL — suspend to recover GPU spend</div>
+              <div class="wei-point-body">Negative economics. Every hour this AIM runs, you lose money. Suspend or reconfigure immediately.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="wei-formula-box">
+        <div class="wei-formula">WEI = Value Score<br>─────────────<br>Cost Score</div>
+        <div class="wei-formula-parts">
+          <div class="wei-part" style="border-color:#00D4FF">
+            <span class="wei-part-name" style="color:#00D4FF">Value Score</span>
+            <span class="wei-part-val" style="color:#00D4FF" id="weiValueScore">$340/hr</span>
+          </div>
+          <div class="wei-part" style="border-color:#FF4455">
+            <span class="wei-part-name" style="color:#FF4455">Cost Score</span>
+            <span class="wei-part-val" style="color:#FF4455" id="weiCostScore">$298/hr</span>
+          </div>
+          <div class="wei-part" style="border-color:#00FF88">
+            <span class="wei-part-name" style="color:#00FF88">WEI</span>
+            <span class="wei-part-val" style="color:#00FF88" id="weiResult">1.14</span>
+          </div>
+          <div class="wei-part" style="border-color:#FFB800">
+            <span class="wei-part-name" style="color:#FFB800">Factory Grade</span>
+            <span class="wei-part-val" style="color:#FFB800" id="weiGrade">B</span>
+          </div>
+        </div>
+        <div style="margin-top:16px;font-size:11px;color:#8892A4;text-align:center;line-height:1.6">
+          Updated every 5 seconds across all 12 AIMs<br>
+          Integrates behavioral drift, SLA status, GPU cost, and industry value model
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DRIFT ANALYSIS -->
+<div class="section">
+  <div class="section-eyebrow">Behavioral Intelligence</div>
+  <h2 class="section-title">6-Dimension CUSUM Drift Analysis</h2>
+  <p class="section-sub">InferPulse tracks six behavioral dimensions continuously using CUSUM statistical control. When any dimension drifts, the WEI adjusts in real time — before a human notices the degradation.</p>
+  <div class="drift-demo">
+    <div class="drift-demo-header">
+      <div>
+        <div class="drift-demo-title">AIM Behavioral Drift Monitor</div>
+        <div class="drift-demo-sub">6 CUSUM dimensions · Updated every 5s</div>
+      </div>
+      <div class="live-badge"><div class="live-dot"></div>LIVE SIMULATION</div>
+    </div>
+    <div class="drift-grid" id="driftGrid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- CAPABILITIES -->
+<div class="section-full" id="capabilities">
+  <div class="inner">
+    <div class="section-eyebrow">Platform Capabilities</div>
+    <h2 class="section-title">Everything you need to run<br>a profitable AMD AI factory</h2>
+    <p class="section-sub">Twelve tabs, seven reports, and a single score that tells you whether your investment is working.</p>
+    <div class="cap-grid">
+
+      <div class="cap-card">
+        <div class="cap-icon">DRILL-DOWN</div>
+        <div class="cap-title">Universal AIM Drill-Down</div>
+        <div class="cap-body">Click any AIM reference anywhere in the platform — XGMI matrix, drift chart, SLA table, leaderboard — and a panel slides in with full economics, behavioral history, SLA status, and value attribution.</div>
+        <div class="cap-tags"><span class="cap-tag">AIM Detail Panel</span><span class="cap-tag">WEI Gauge</span><span class="cap-tag">6-Dim Drift</span><span class="cap-tag">Value Attribution</span></div>
+      </div>
+
+      <div class="cap-card">
+        <div class="cap-icon">HELIOS</div>
+        <div class="cap-title">Helios Economic Overlay</div>
+        <div class="cap-body">Correlates AMD Helios rack-scale power data with WEI. Each rack shows power percentage against rated capacity and WEI side by side. Racks in combined crisis — high power, low WEI — surface immediately as the most expensive problem in your factory.</div>
+        <div class="cap-tags"><span class="cap-tag">Power × WEI</span><span class="cap-tag">9 rack states</span><span class="cap-tag">Combined crisis</span></div>
+      </div>
+
+      <div class="cap-card">
+        <div class="cap-icon">PORTFOLIO</div>
+        <div class="cap-title">Portfolio Intelligence</div>
+        <div class="cap-body">Every AIM is classified into Scale, Maintain, Optimize, or Kill — automatically, every tick. The CFO narrative explains the classification in plain language with dollar figures. The recommendations table shows exactly what to do and how much you save.</div>
+        <div class="cap-tags"><span class="cap-tag">Auto-classification</span><span class="cap-tag">CFO narrative</span><span class="cap-tag">Action queue</span></div>
+      </div>
+
+      <div class="cap-card">
+        <div class="cap-icon">SCORE™</div>
+        <div class="cap-title">Score™ Decomposition</div>
+        <div class="cap-body">InferPulse Score™ breaks into six weighted dimensions: behavioral integrity (35%), instruction governance (20%), hardware reliability (15%), inference performance (12%), compliance coverage (10%), session integrity (8%). The lowest dimension tells you exactly where to focus.</div>
+        <div class="cap-tags"><span class="cap-tag">6 dimensions</span><span class="cap-tag">Weighted</span><span class="cap-tag">Priority action</span></div>
+      </div>
+
+      <div class="cap-card">
+        <div class="cap-icon">TW CONNECTOR</div>
+        <div class="cap-title">TensorWave Live Connector</div>
+        <div class="cap-body">Configure your TensorWave factory endpoint, API key, and polling interval. Hit Test Connection and watch the live log show TLS handshake, authentication, GPU detection, and AIM stream establishment. Economics update in real time from your actual cluster.</div>
+        <div class="cap-tags"><span class="cap-tag">8,192 MI325X</span><span class="cap-tag">Live log</span><span class="cap-tag">5s polling</span></div>
+      </div>
+
+      <div class="cap-card">
+        <div class="cap-icon">AMD FEEDS</div>
+        <div class="cap-title">AMD Native Integration</div>
+        <div class="cap-body">Six configurable AMD telemetry feeds: AMD-SMI, ROCm Metrics, Helios Power Management, EAI Suite Hooks, Instinct Fabric, and KFD Process Monitor. Each feed plugs directly into the WEI computation, Helios overlay, and drift engine.</div>
+        <div class="cap-tags"><span class="cap-tag">AMD-SMI</span><span class="cap-tag">ROCm</span><span class="cap-tag">Helios</span><span class="cap-tag">KFD</span></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- SCORE DECOMP INTERACTIVE -->
+<div class="section" id="score">
+  <div class="section-eyebrow">Score™ Intelligence</div>
+  <h2 class="section-title">What drives the InferPulse Score™?</h2>
+  <p class="section-sub">Every AIM gets a score from 0–100, decomposed into six weighted dimensions. Click an AIM to see its breakdown.</p>
+  <div class="score-demo">
+    <div class="score-demo-header">
+      <div class="drift-demo-title">InferPulse Score™ Leaderboard</div>
+      <div class="live-badge"><div class="live-dot"></div>INTERACTIVE</div>
+    </div>
+    <div class="score-aim-tabs" id="scoreTabs"></div>
+    <div class="score-breakdown">
+      <div class="score-big">
+        <div class="score-num" id="scoreNum" style="color:#00FF88">87</div>
+        <div>
+          <div class="score-grade-badge" id="scoreGrade" style="color:#00FF88;border-color:rgba(0,255,136,0.4)">A</div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--dim)" id="scoreAimName">llama-finance-prod</div>
+        </div>
+      </div>
+      <div class="score-dims" id="scoreDims"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PORTFOLIO MATRIX -->
+<div class="section-full" id="portfolio">
+  <div class="inner">
+    <div class="section-eyebrow">Portfolio Intelligence</div>
+    <h2 class="section-title">The Four Zones</h2>
+    <p class="section-sub">InferPulse classifies every AIM automatically based on WEI trend, value-cost ratio, and behavioral trajectory. The portfolio matrix tells you where your GPU spend is going — and what to do about it.</p>
+    <div class="portfolio-grid">
+      <div class="port-quad" style="border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.04)">
+        <div class="port-quad-header">
+          <div class="port-quad-label" style="color:#00FF88">SCALE</div>
+          <div class="port-quad-count" style="color:#00FF88" id="pqScale">3</div>
+        </div>
+        <div class="port-quad-desc">WEI ≥ 1.4 · Rising trend · SLA compliant. Increase GPU allocation. These AIMs produce your highest value-per-dollar.</div>
+        <div class="port-chips" id="pcScale"></div>
+      </div>
+      <div class="port-quad" style="border-color:rgba(14,165,233,0.3);background:rgba(14,165,233,0.04)">
+        <div class="port-quad-header">
+          <div class="port-quad-label" style="color:#0EA5E9">MAINTAIN</div>
+          <div class="port-quad-count" style="color:#0EA5E9" id="pqMaintain">5</div>
+        </div>
+        <div class="port-quad-desc">WEI 1.0–1.4 · Stable. Monitor weekly. No action required unless drift accelerates.</div>
+        <div class="port-chips" id="pcMaintain"></div>
+      </div>
+      <div class="port-quad" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.04)">
+        <div class="port-quad-header">
+          <div class="port-quad-label" style="color:#F59E0B">OPTIMIZE</div>
+          <div class="port-quad-count" style="color:#F59E0B" id="pqOptimize">3</div>
+        </div>
+        <div class="port-quad-desc">WEI 0.6–1.0 · Declining. Root cause investigation required. Behavioral drift likely driver.</div>
+        <div class="port-chips" id="pcOptimize"></div>
+      </div>
+      <div class="port-quad" style="border-color:rgba(255,68,85,0.3);background:rgba(255,68,85,0.04)">
+        <div class="port-quad-header">
+          <div class="port-quad-label" style="color:#FF4455">KILL</div>
+          <div class="port-quad-count" style="color:#FF4455" id="pqKill">1</div>
+        </div>
+        <div class="port-quad-desc">WEI &lt; 0.6 · Negative economics. Every hour costs more than it produces. Suspend immediately.</div>
+        <div class="port-chips" id="pcKill"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REPORTS -->
+<div class="section" id="reports">
+  <div class="section-eyebrow">Downloadable Reports</div>
+  <h2 class="section-title">Seven reports for every<br>stakeholder in the room</h2>
+  <p class="section-sub">Every report opens in Chrome, prints to PDF in one click, and contains no placeholder content — only data from your actual AMD AI factory.</p>
+  <div class="report-grid">
+    <div class="report-card" style="border-color:rgba(27,79,138,0.4)">
+      <div class="report-icon" style="color:#1B4F8A">BOARD PACK</div>
+      <div class="report-title">Factory Economics Board Pack</div>
+      <div class="report-desc">7 sections: cover page with factory grade, executive summary, portfolio matrix, priority actions with dollar savings, factory P&L, 30/60/90-day forecast, compliance status.</div>
+      <div class="report-link" style="color:#1B4F8A">For the CIO and board →</div>
+    </div>
+    <div class="report-card" style="border-color:rgba(27,107,58,0.4)">
+      <div class="report-icon" style="color:#1B6B3A">ROI REPORT</div>
+      <div class="report-title">WEI ROI Analysis</div>
+      <div class="report-desc">Full return on investment calculation with payback period, net annual ROI, incidents prevented, and compliance risk reduction — quantified in dollars.</div>
+      <div class="report-link" style="color:#1B6B3A">For the CFO →</div>
+    </div>
+    <div class="report-card" style="border-color:rgba(255,184,0,0.3)">
+      <div class="report-icon" style="color:#FFB800">TW ROI</div>
+      <div class="report-title">TensorWave ROI Report</div>
+      <div class="report-desc">8,192 MI325X GPU neocloud scenario. 6 enterprise tenants. Full factory economics with per-tenant WEI, monthly value, and contract coverage analysis.</div>
+      <div class="report-link" style="color:#FFB800">For TensorWave →</div>
+    </div>
+    <div class="report-card" style="border-color:rgba(14,165,233,0.3)">
+      <div class="report-icon" style="color:#0EA5E9">COMPLIANCE CERT</div>
+      <div class="report-title">EU AI Act Compliance Certificate</div>
+      <div class="report-desc">Per-AIM certifiable compliance statement covering EU AI Act, NIST AI RMF, GDPR, ISO 42001. SHA-256 hash chain summary. Signature block for CISO sign-off.</div>
+      <div class="report-link" style="color:#0EA5E9">For the CISO →</div>
+    </div>
+    <div class="report-card" style="border-color:rgba(139,92,246,0.3)">
+      <div class="report-icon" style="color:#8B5CF6">AIM AUDIT</div>
+      <div class="report-title">AIM Behavioral Audit Report</div>
+      <div class="report-desc">8-week WEI and drift history. Value attribution by driver. Compliance status across 692 frameworks. Regulatory cost avoided. Full audit trail from deployment to present.</div>
+      <div class="report-link" style="color:#8B5CF6">For compliance teams →</div>
+    </div>
+    <div class="report-card" style="border-color:rgba(255,68,85,0.3)">
+      <div class="report-icon" style="color:#FF4455">CONFLICT REPORT</div>
+      <div class="report-title">Conflict Investigation Report</div>
+      <div class="report-desc">Step-by-step causal chain from instruction conflict detection to business impact. Affected AIMs with economic state. Resolution path with owners and timelines. Printable for legal review.</div>
+      <div class="report-link" style="color:#FF4455">For risk and legal →</div>
+    </div>
+  </div>
+</div>
+
+<!-- TENSORWAVE -->
+<div class="section-full" id="tensorwave">
+  <div class="inner">
+    <div class="section-eyebrow">TensorWave Integration</div>
+    <h2 class="section-title">Built for neocloud scale</h2>
+    <p class="section-sub">The TensorWave Enterprise Factory scenario runs 8,192 AMD Instinct MI325X GPUs across 6 enterprise tenants. InferPulse shows the factory-level economics for every tenant simultaneously.</p>
+    <div class="tw-hero">
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:0.15em;margin-bottom:8px">FACTORY ECONOMICS GRADE</div>
+        <div class="tw-grade" id="twGrade">B</div>
+        <div style="font-family:var(--mono);font-size:18px;color:var(--gold);margin-bottom:20px">WEI <span id="twWei">1.14</span></div>
+        <div class="tw-stats-grid">
+          <div class="tw-stat"><span class="tw-stat-val">8,192</span><div class="tw-stat-label">AMD Instinct MI325X GPUs</div></div>
+          <div class="tw-stat"><span class="tw-stat-val" id="twValue">$4.2M</span><div class="tw-stat-label">Monthly Value Produced</div></div>
+          <div class="tw-stat"><span class="tw-stat-val">6</span><div class="tw-stat-label">Enterprise Tenants</div></div>
+        </div>
+      </div>
+      <div class="tw-tenants" id="twTenants">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AMD NATIVE -->
+<div class="section" id="amd">
+  <div class="section-eyebrow">AMD Native</div>
+  <h2 class="section-title">Built for AMD infrastructure,<br>not adapted for it</h2>
+  <p class="section-sub">InferPulse is designed from the ground up for AMD AI factory infrastructure. Every metric, every feed, every integration point is AMD-specific.</p>
+  <div class="amd-grid">
+    <div class="amd-card">
+      <div class="amd-card-chip">INSTINCT</div>
+      <div class="amd-card-title">MI300X / MI355X / MI325X</div>
+      <div class="amd-card-body">WEI computation accounts for AMD Instinct GPU cost profiles, VRAM capacity, and compute characteristics natively. No generic GPU abstraction.</div>
+    </div>
+    <div class="amd-card">
+      <div class="amd-card-chip">ROCm</div>
+      <div class="amd-card-title">ROCm Metrics Integration</div>
+      <div class="amd-card-body">Direct ROCm platform performance counter ingestion. Compute occupancy, memory bandwidth, and kernel efficiency feed directly into behavioral drift scoring.</div>
+    </div>
+    <div class="amd-card">
+      <div class="amd-card-chip">HELIOS</div>
+      <div class="amd-card-title">AMD Helios Rack-Scale</div>
+      <div class="amd-card-body">Helios power management data overlaid with WEI. Nine rack economic states from Optimal to Critical Waste. Combined crisis detection in real time.</div>
+    </div>
+    <div class="amd-card">
+      <div class="amd-card-chip">AMD-SMI</div>
+      <div class="amd-card-title">AMD System Management</div>
+      <div class="amd-card-body">AMD-SMI telemetry — utilization, temperature, power draw, VRAM — flows into the drift engine and economic overlay automatically.</div>
+    </div>
+    <div class="amd-card">
+      <div class="amd-card-chip">XGMI</div>
+      <div class="amd-card-title">Infinity Fabric / XGMI</div>
+      <div class="amd-card-body">XGMI bandwidth matrix visualization in the Cluster L2 view. Click any GPU cell to see which AIM is running on that GPU and its full economic detail.</div>
+    </div>
+    <div class="amd-card">
+      <div class="amd-card-chip">KFD</div>
+      <div class="amd-card-title">KFD Process Monitor</div>
+      <div class="amd-card-body">Kernel Fusion Driver process-level GPU assignment tracking. Maps physical GPU resources to logical AIMs for precise cost attribution.</div>
+    </div>
+    <div class="amd-card">
+      <div class="amd-card-chip">vLLM / ROCm</div>
+      <div class="amd-card-title">vLLM on ROCm</div>
+      <div class="amd-card-body">TTFT and TPOT latency captured from vLLM serving on ROCm. SLA breach detection feeds WEI economic penalty computation in real time.</div>
+    </div>
+    <div class="amd-card">
+      <div class="amd-card-chip">AITER</div>
+      <div class="amd-card-title">AITER Kernel Intelligence</div>
+      <div class="amd-card-body">AMD AITER kernel mode distribution monitored per node. Clock histogram and kernel efficiency factored into the hardware reliability score dimension.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-strip">
+  <h2>Meet us at AMD Advancing AI<br><em style="color:var(--gold);font-style:normal">July 22–23, Moscone West</em></h2>
+  <p>We'll show you the factory economics for your AMD AI investment in 30 minutes. Bring your GPU count and workload mix.</p>
+  <div class="cta-buttons">
+    <a href="mailto:vyasa.murthy@venture-vertex.com?subject=InferPulse Meeting Request - AMD Advancing AI July 22-23" class="btn-primary" style="font-size:13px;padding:14px 28px">Schedule a Meeting →</a>
+    <a href="https://inferpulse.live" class="btn-secondary" style="font-size:13px;padding:14px 28px">View Live Platform</a>
+  </div>
+  <div class="cta-detail">Vyasa Murthy · vyasa.murthy@venture-vertex.com · Venture Vertex LLC</div>
+</div>
+
+<footer>
+  <div>
+    <div class="footer-logo">InferPulse™</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:4px">AMD AI Factory Intelligence & Workload Economics</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:8px">Venture Vertex LLC · vyasa.murthy@venture-vertex.com</div>
+  </div>
+  <div class="footer-amd-badge">AMD Advancing AI · July 22–23, 2026</div>
+  <div class="footer-meta">
+    inferpulse.live<br>
+    Backend: localhost:8210 (live demo)<br>
+    GitHub: vyasamurthy/inferpulse-live
+  </div>
+</footer>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────────────
+const AIMS = [
+  { id:"a001", name:"llama-finance-prod",  wei:1.62, cls:"SCALE",    score:91, drift:8,  dims:{bi:94,ig:89,hr:88,ip:92,cc:87,si:93}, industry:"Financial Services" },
+  { id:"a002", name:"phi-legal-ops",       wei:1.41, cls:"SCALE",    score:85, drift:11, dims:{bi:88,ig:85,hr:91,ip:82,cc:79,si:87}, industry:"Legal & Compliance" },
+  { id:"a003", name:"mixtral-itsm",        wei:1.38, cls:"SCALE",    score:83, drift:14, dims:{bi:82,ig:87,hr:85,ip:84,cc:82,si:79}, industry:"IT Operations" },
+  { id:"a004", name:"llama-risk-mgmt",     wei:1.19, cls:"MAINTAIN", score:77, drift:18, dims:{bi:79,ig:76,hr:82,ip:73,cc:71,si:80}, industry:"Risk Management" },
+  { id:"a005", name:"codestral-devops",    wei:1.14, cls:"MAINTAIN", score:74, drift:21, dims:{bi:75,ig:72,hr:80,ip:78,cc:68,si:74}, industry:"Software Engineering" },
+  { id:"a006", name:"mistral-support",     wei:1.07, cls:"MAINTAIN", score:71, drift:25, dims:{bi:72,ig:69,hr:76,ip:70,cc:65,si:73}, industry:"Customer Support" },
+  { id:"a007", name:"phi-hr-assistant",    wei:1.04, cls:"MAINTAIN", score:69, drift:28, dims:{bi:70,ig:68,hr:74,ip:67,cc:63,si:71}, industry:"Human Resources" },
+  { id:"a008", name:"llama-audit-intel",   wei:1.02, cls:"MAINTAIN", score:68, drift:30, dims:{bi:68,ig:70,hr:72,ip:65,cc:67,si:68}, industry:"Audit & Compliance" },
+  { id:"a009", name:"mixtral-trading",     wei:0.89, cls:"OPTIMIZE", score:62, drift:38, dims:{bi:60,ig:65,hr:70,ip:58,cc:55,si:63}, industry:"Trading Analytics" },
+  { id:"a010", name:"falcon-research",     wei:0.77, cls:"OPTIMIZE", score:57, drift:45, dims:{bi:55,ig:58,hr:68,ip:52,cc:49,si:60}, industry:"Research Intelligence" },
+  { id:"a011", name:"llama-claims-proc",   wei:0.71, cls:"OPTIMIZE", score:53, drift:52, dims:{bi:50,ig:54,hr:64,ip:48,cc:45,si:57}, industry:"Claims Processing" },
+  { id:"a012", name:"mistral-legacy-int",  wei:0.42, cls:"KILL",     score:38, drift:71, dims:{bi:35,ig:40,hr:55,ip:33,cc:28,si:42}, industry:"Legacy Integration" },
+]
+
+const TW_TENANTS = [
+  { name:"TensorWave Financial", industry:"Financial Services", grade:"A", wei:1.58, value:820000 },
+  { name:"TW Healthcare AI",     industry:"Healthcare",          grade:"B", wei:1.21, value:640000 },
+  { name:"TW Legal Analytics",   industry:"Legal",               grade:"B", wei:1.14, value:580000 },
+  { name:"TW Gov Intelligence",  industry:"Government",          grade:"C", wei:0.91, value:420000 },
+  { name:"TW Energy Ops",        industry:"Energy",              grade:"B", wei:1.07, value:510000 },
+  { name:"TW Research Lab",      industry:"Research",            grade:"C", wei:0.84, value:380000 },
+]
+
+const DIM_CONFIG = [
+  { key:"bi", label:"Behavioral Integrity",   weight:35, color:"#FF4D6D" },
+  { key:"ig", label:"Instruction Governance", weight:20, color:"#FFB703" },
+  { key:"hr", label:"Hardware Reliability",   weight:15, color:"#8B5CF6" },
+  { key:"ip", label:"Inference Performance",  weight:12, color:"#00B4D8" },
+  { key:"cc", label:"Compliance Coverage",    weight:10, color:"#06D6A0" },
+  { key:"si", label:"Session Integrity",      weight:8,  color:"#0EA5E9" },
+]
+
+const DRIFT_DIMS = [
+  { key:"rp", label:"Response Pattern",   color:"#00D4FF" },
+  { key:"td", label:"Token Distribution", color:"#8B5CF6" },
+  { key:"ct", label:"Confidence Traj.",   color:"#F59E0B" },
+  { key:"cc", label:"Cross-Session",      color:"#00FF88" },
+  { key:"ol", label:"Output Length",      color:"#FF4455" },
+  { key:"ss", label:"Semantic Sim.",      color:"#FFB800" },
+]
+
+function weiColor(w) { return w>=1.2?"#00FF88":w>=0.8?"#F59E0B":"#FF4455" }
+function clsColor(c) { return {SCALE:"#00FF88",MAINTAIN:"#0EA5E9",OPTIMIZE:"#F59E0B",KILL:"#FF4455"}[c]||"#888" }
+function gradeColor(g) { return {A:"#00FF88",B:"#0EA5E9",C:"#F59E0B",D:"#FF4455",F:"#FF0000"}[g]||"#888" }
+function gradeLetter(w) { return w>=1.4?"A":w>=1.0?"B":w>=0.7?"C":"D" }
+
+// ── FACTORY SCORE CARD ────────────────────────────────────────────────────────
+function buildAIMBars() {
+  const el = document.getElementById("aimBars")
+  if (!el) return
+  el.innerHTML = AIMS.map(a => {
+    const wc = weiColor(a.wei)
+    const cc = clsColor(a.cls)
+    return `<div class="aim-bar-row">
+      <div class="aim-bar-name" style="color:${wc}">${a.name.split("-").slice(0,2).join("-")}</div>
+      <div class="aim-bar-track"><div class="aim-bar-fill" style="background:${wc};width:0%" data-target="${Math.min(a.wei/2.5*100,100)}"></div></div>
+      <div class="aim-bar-val" style="color:${wc}">${a.wei.toFixed(2)}</div>
+      <div class="aim-class" style="color:${cc};background:${cc}22;border:1px solid ${cc}44">${a.cls[0]}</div>
+    </div>`
+  }).join("")
+
+  // Animate bars
+  setTimeout(() => {
+    el.querySelectorAll(".aim-bar-fill").forEach(b => {
+      b.style.width = b.dataset.target + "%"
+    })
+  }, 300)
+}
+
+// ── PORTFOLIO CHIPS ───────────────────────────────────────────────────────────
+function buildPortfolio() {
+  const groups = { SCALE:[], MAINTAIN:[], OPTIMIZE:[], KILL:[] }
+  AIMS.forEach(a => groups[a.cls]?.push(a))
+
+  ;["Scale","Maintain","Optimize","Kill"].forEach(cls => {
+    const KEY = cls.toUpperCase()
+    const el = document.getElementById(`pc${cls}`)
+    const countEl = document.getElementById(`pq${cls}`)
+    if (!el) return
+    const aims = groups[KEY]
+    const c = clsColor(KEY)
+    if (countEl) countEl.textContent = aims.length
+    el.innerHTML = aims.map(a =>
+      `<div class="port-chip" style="color:${c};background:${c}18;border-color:${c}44">${a.name.split("-").slice(0,2).join("-")} (${a.wei.toFixed(2)})</div>`
+    ).join("")
+  })
+}
+
+// ── DRIFT GRID ────────────────────────────────────────────────────────────────
+let driftValues = {}
+function buildDriftGrid() {
+  const el = document.getElementById("driftGrid")
+  if (!el) return
+
+  // Seed drift values
+  AIMS.slice(0, 8).forEach(a => {
+    driftValues[a.id] = {}
+    DRIFT_DIMS.forEach(d => {
+      driftValues[a.id][d.key] = Math.max(2, a.drift + (Math.random() * 20 - 10))
+    })
+  })
+
+  el.innerHTML = AIMS.slice(0, 8).map(a => {
+    const dc = a.drift > 40 ? "#FF4455" : a.drift > 20 ? "#F59E0B" : "#00FF88"
+    return `<div class="drift-cell" data-id="${a.id}">
+      <div class="drift-cell-name" style="color:${dc}">${a.name} <span style="font-size:9px;color:${dc}">${a.drift.toFixed(1)}% drift</span></div>
+      <div class="drift-dim-bars">
+        ${DRIFT_DIMS.map(d => {
+          const v = driftValues[a.id][d.key]
+          return `<div class="drift-dim">
+            <div class="drift-dim-label">${d.label}</div>
+            <div class="drift-dim-track"><div class="drift-dim-fill" style="width:${Math.min(v,100)}%;background:${d.color}" id="dd_${a.id}_${d.key}"></div></div>
+            <div class="drift-dim-val" style="color:${d.color}" id="dv_${a.id}_${d.key}">${v.toFixed(0)}%</div>
+          </div>`
+        }).join("")}
+      </div>
+    </div>`
+  }).join("")
+}
+
+// Animate drift values continuously
+function tickDrift() {
+  AIMS.slice(0,8).forEach(a => {
+    DRIFT_DIMS.forEach(d => {
+      const current = driftValues[a.id][d.key]
+      const delta = (Math.random() - 0.48) * 1.5
+      driftValues[a.id][d.key] = Math.max(1, Math.min(95, current + delta))
+      const v = driftValues[a.id][d.key]
+      const fillEl = document.getElementById(`dd_${a.id}_${d.key}`)
+      const valEl = document.getElementById(`dv_${a.id}_${d.key}`)
+      if (fillEl) fillEl.style.width = v.toFixed(0) + "%"
+      if (valEl) valEl.textContent = v.toFixed(0) + "%"
+    })
+  })
+}
+
+// ── SCORE DECOMP ──────────────────────────────────────────────────────────────
+let selectedAIMIdx = 0
+function buildScoreTabs() {
+  const el = document.getElementById("scoreTabs")
+  if (!el) return
+  el.innerHTML = AIMS.map((a,i) => {
+    const gc = gradeColor(gradeLetter(a.wei))
+    return `<div class="score-aim-tab ${i===0?'active':''}" onclick="selectScoreAIM(${i})" data-idx="${i}">
+      <span style="color:${gc}">${gradeLetter(a.wei)}</span> ${a.name.split("-").slice(0,2).join("-")}
+    </div>`
+  }).join("")
+}
+
+function selectScoreAIM(idx) {
+  selectedAIMIdx = idx
+  document.querySelectorAll(".score-aim-tab").forEach((t,i) => {
+    t.classList.toggle("active", i === idx)
+  })
+  renderScoreDims(AIMS[idx])
+}
+
+function renderScoreDims(aim) {
+  const gc = gradeColor(gradeLetter(aim.wei))
+  const g = gradeLetter(aim.wei)
+  document.getElementById("scoreNum").textContent = aim.score
+  document.getElementById("scoreNum").style.color = gc
+  const badge = document.getElementById("scoreGrade")
+  badge.textContent = g
+  badge.style.color = gc
+  badge.style.borderColor = gc + "44"
+  document.getElementById("scoreAimName").textContent = aim.name
+  const el = document.getElementById("scoreDims")
+  if (!el) return
+  el.innerHTML = DIM_CONFIG.map(d => {
+    const v = aim.dims[d.key] ?? 0
+    const weighted = Math.round(v * d.weight / 100)
+    return `<div class="score-dim-row">
+      <div class="score-dim-name" style="color:${d.color}">${d.label}</div>
+      <div class="score-dim-track"><div class="score-dim-fill" style="background:${d.color};width:0%" data-target="${v}"></div></div>
+      <div class="score-dim-num" style="color:${d.color}">${v}</div>
+      <div class="score-dim-weight">×${d.weight}% = <span style="color:${d.color};font-weight:700">+${weighted}</span></div>
+    </div>`
+  }).join("")
+  setTimeout(() => {
+    el.querySelectorAll(".score-dim-fill").forEach(b => { b.style.width = b.dataset.target + "%" })
+  }, 100)
+}
+
+// ── TENSORWAVE ────────────────────────────────────────────────────────────────
+function buildTensorWave() {
+  const el = document.getElementById("twTenants")
+  if (!el) return
+  el.innerHTML = TW_TENANTS.map(t => {
+    const gc = gradeColor(t.grade)
+    return `<div class="tw-tenant">
+      <div>
+        <div class="tw-tenant-name">${t.name}</div>
+        <div style="font-size:10px;color:var(--dim);font-family:var(--mono)">${t.industry} · WEI ${t.wei.toFixed(2)}</div>
+      </div>
+      <div>
+        <div class="tw-tenant-grade" style="color:${gc}">${t.grade}</div>
+        <div style="font-size:10px;color:var(--teal);font-family:var(--mono)">$${(t.value/1000).toFixed(0)}K/mo</div>
+      </div>
+    </div>`
+  }).join("")
+}
+
+// ── WEI ANIMATION ─────────────────────────────────────────────────────────────
+let weiBase = { val: 1.14, dir: 1 }
+function tickWEI() {
+  weiBase.val += (Math.random() - 0.48) * 0.004
+  weiBase.val = Math.max(0.85, Math.min(1.65, weiBase.val))
+  const w = weiBase.val
+  const g = gradeLetter(w)
+  const gc = gradeColor(g)
+  const el = document.getElementById("heroGrade")
+  const wEl = document.getElementById("heroWei")
+  if (el) { el.textContent = g; el.style.color = gc }
+  if (wEl) { wEl.textContent = w.toFixed(2); wEl.style.color = gc }
+
+  const weiResult = document.getElementById("weiResult")
+  const weiGrade = document.getElementById("weiGrade")
+  if (weiResult) { weiResult.textContent = w.toFixed(2); weiResult.style.color = gc }
+  if (weiGrade) { weiGrade.textContent = g; weiGrade.style.color = gc }
+
+  const twGrade = document.getElementById("twGrade")
+  const twWei = document.getElementById("twWei")
+  if (twGrade) { twGrade.textContent = g; twGrade.style.color = gc }
+  if (twWei) { twWei.textContent = w.toFixed(2) }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  buildAIMBars()
+  buildPortfolio()
+  buildDriftGrid()
+  buildScoreTabs()
+  renderScoreDims(AIMS[0])
+  buildTensorWave()
+
+  // Live simulation ticks
+  setInterval(tickDrift, 800)
+  setInterval(tickWEI, 2000)
+
+  // Total monthly value
+  const totalVal = AIMS.reduce((s, a) => s + a.wei * 85 * 720, 0)
+  const tvEl = document.getElementById("heroValue")
+  if (tvEl) tvEl.textContent = "$" + (totalVal/1e6).toFixed(1) + "M"
+})
+</script>
+</body>
+</html>
