@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InferPulse™ — AMD AI Factory Intelligence & Workload Economics</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600;700&family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:    #06080F;
+  --panel: #0D1320;
+  --border:#1A2540;
+  --text:  #E2E8F0;
+  --dim:   #8892A4;
+  --mute:  #444C5E;
+  --gold:  #FFB800;
+  --green: #00FF88;
+  --teal:  #00D4FF;
+  --blue:  #0EA5E9;
+  --red:   #FF4455;
+  --amber: #F59E0B;
+  --amd:   #ED1C24;
+  --purple:#8B5CF6;
+  --mono:  'IBM Plex Mono', monospace;
+  --sans:  'Inter', sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,8,15,0.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);height:52px;padding:0 40px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--gold);letter-spacing:-0.01em}
+.nav-logo span{color:var(--dim);font-weight:300}
+.nav-links{display:flex;gap:24px}
+.nav-links a{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:0.06em;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{font-family:var(--mono);font-size:10px;font-weight:700;color:#000;background:var(--gold);padding:6px 16px;border-radius:5px;letter-spacing:0.04em;transition:opacity .2s}
+.nav-cta:hover{opacity:.88}
+@media(max-width:700px){.nav-links{display:none}}
+
+/* SECTIONS */
+section{padding:100px 40px;max-width:1100px;margin:0 auto}
+.full-bleed{max-width:none;padding:80px 40px;background:var(--panel);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.full-bleed .inner{max-width:1100px;margin:0 auto}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease, transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:52px;padding-bottom:80px;max-width:none;position:relative;overflow:hidden}
+.hero-inner{max-width:1100px;margin:0 auto;width:100%;padding:0 40px;display:grid;grid-template-columns:1fr 420px;gap:60px;align-items:center}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,184,0,.025) 1px, transparent 1px),linear-gradient(90deg, rgba(255,184,0,.025) 1px, transparent 1px);background-size:50px 50px;pointer-events:none}
+.hero::after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amd) 0%,transparent 60%)}
+.hero-eyebrow{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.hero-eyebrow::before{content:"";display:block;width:28px;height:1px;background:var(--gold)}
+.hero-h1{font-size:clamp(40px,5vw,68px);font-weight:900;line-height:1.03;letter-spacing:-.04em;margin-bottom:22px}
+.hero-h1 em{font-style:normal;color:var(--gold)}
+.hero-sub{font-size:17px;color:var(--dim);line-height:1.7;max-width:500px;margin-bottom:36px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-gold{font-family:var(--mono);font-size:11px;font-weight:700;color:#000;background:var(--gold);padding:11px 22px;border-radius:6px;letter-spacing:.04em;transition:all .2s}
+.btn-gold:hover{transform:translateY(-1px)}
+.btn-outline{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text);border:1px solid var(--border);padding:11px 22px;border-radius:6px;letter-spacing:.04em;transition:all .2s}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+
+/* WEI LIVE CARD */
+.wei-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:28px;position:relative;overflow:hidden}
+.wei-card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--gold),var(--teal),var(--green))}
+.wei-live-badge{font-family:var(--mono);font-size:8px;font-weight:700;color:var(--green);background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.25);padding:2px 8px;border-radius:3px;display:flex;align-items:center;gap:5px;width:fit-content;margin-bottom:20px;letter-spacing:.1em}
+.wei-live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.wei-number-row{display:flex;align-items:baseline;gap:14px;margin-bottom:16px}
+.wei-big{font-family:var(--mono);font-size:64px;font-weight:700;line-height:1;letter-spacing:-.03em}
+.wei-label-col{display:flex;flex-direction:column;gap:3px}
+.wei-label{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.15em;text-transform:uppercase}
+.wei-grade{font-family:var(--mono);font-size:13px;font-weight:700}
+.portfolio-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:16px}
+.port-cell{background:rgba(255,255,255,.03);border-radius:5px;padding:7px 8px;border:1px solid}
+.port-cell-label{font-family:var(--mono);font-size:7px;font-weight:700;letter-spacing:.08em;margin-bottom:3px}
+.port-cell-count{font-family:var(--mono);font-size:20px;font-weight:700;line-height:1}
+.aims-strip{display:flex;flex-direction:column;gap:5px}
+.aim-row{display:flex;align-items:center;gap:8px}
+.aim-name{font-family:var(--mono);font-size:9px;color:var(--dim);width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aim-track{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.aim-fill{height:100%;border-radius:2px;width:0%;transition:width 1.8s cubic-bezier(.4,0,.2,1)}
+.aim-wei{font-family:var(--mono);font-size:9px;width:34px;text-align:right;flex-shrink:0;font-weight:600}
+
+/* EYEBROW + TITLE */
+.eyebrow{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px}
+.section-title{font-size:clamp(28px,3.5vw,44px);font-weight:800;letter-spacing:-.03em;margin-bottom:14px;line-height:1.05}
+.section-sub{font-size:16px;color:var(--dim);max-width:580px;line-height:1.7;margin-bottom:44px}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:start}
+.two-col-flip{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:start}
+@media(max-width:800px){.two-col,.two-col-flip,.hero-inner{grid-template-columns:1fr}}
+
+/* FEATURE LIST */
+.feature-list{display:flex;flex-direction:column;gap:14px;margin-top:20px}
+.feature-item{display:flex;gap:12px;align-items:flex-start}
+.feature-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:8px}
+.feature-text{font-size:14px;color:var(--dim);line-height:1.6}
+.feature-text strong{color:var(--text);font-weight:600}
+
+/* DRIFT PANEL */
+.drift-panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px}
+.drift-panel-label{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.12em;margin-bottom:14px}
+.d-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.d-label{font-family:var(--mono);font-size:9px;color:var(--dim);width:110px;flex-shrink:0}
+.d-track{flex:1;height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden}
+.d-fill{height:100%;border-radius:2px;width:0%;transition:width 1.6s cubic-bezier(.4,0,.2,1)}
+.d-val{font-family:var(--mono);font-size:9px;width:28px;text-align:right;font-weight:600;flex-shrink:0}
+
+/* COUNCIL SCATTER */
+.council-panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:22px}
+.council-label{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.12em;margin-bottom:18px}
+.axis-container{position:relative;margin-bottom:12px}
+.axis-line{height:1px;background:var(--border);margin:20px 0 6px}
+.axis-dots{position:absolute;top:14px;left:0;right:0}
+.a-dot{position:absolute;width:8px;height:8px;border-radius:50%;border:2px solid;background:var(--bg);transform:translateX(-50%);opacity:0;transition:opacity .4s}
+.a-dot.shown{opacity:1}
+.a-ensemble{position:absolute;width:11px;height:11px;border-radius:50%;transform:translateX(-50%);top:-1.5px;opacity:0;transition:opacity .5s .8s;background:var(--gold)}
+.a-ensemble.shown{opacity:1}
+.a-ci{position:absolute;top:-4px;height:8px;background:rgba(255,184,0,.12);border-radius:3px;opacity:0;transition:opacity .5s .6s}
+.a-ci.shown{opacity:1}
+.axis-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px;color:var(--mute)}
+.agents-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px}
+.agent-tag{font-family:var(--mono);font-size:8px;color:var(--dim);display:flex;align-items:center;gap:5px}
+.agent-color{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.ensemble-result{font-family:var(--mono);font-size:11px;color:var(--gold);font-weight:700;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+
+/* COMPLIANCE GRID */
+.industries-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.industry-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 14px;transition:border-color .2s}
+.industry-card:hover{border-color:rgba(139,92,246,.4)}
+.ind-icon{font-family:var(--mono);font-size:8px;font-weight:700;color:var(--purple);background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);padding:2px 6px;border-radius:3px;display:inline-block;margin-bottom:8px;letter-spacing:.06em}
+.ind-name{font-size:12px;font-weight:700;margin-bottom:3px}
+.ind-fws{font-family:var(--mono);font-size:9px;color:var(--dim)}
+
+/* AMD FEEDS GRID */
+.feeds-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.feed-card{background:var(--panel);border:1px solid rgba(237,28,36,.15);border-radius:8px;padding:14px 16px}
+.feed-chip{font-family:var(--mono);font-size:8px;font-weight:700;color:var(--amd);background:rgba(237,28,36,.08);padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:8px;letter-spacing:.06em}
+.feed-name{font-size:12px;font-weight:700;margin-bottom:3px}
+.feed-desc{font-size:11px;color:var(--dim);line-height:1.5}
+
+/* REPORTS GRID */
+.reports-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.report-card{border-radius:8px;padding:14px;border:1px solid;transition:transform .2s}
+.report-card:hover{transform:translateY(-2px)}
+.report-icon{font-family:var(--mono);font-size:9px;font-weight:700;margin-bottom:8px}
+.report-name{font-size:12px;font-weight:700;margin-bottom:4px}
+.report-who{font-size:10px;color:var(--dim)}
+
+/* STATS BAR */
+.stats-bar{display:flex;gap:0;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:60px 0}
+.stat-cell{flex:1;min-width:150px;padding:20px 24px;border-right:1px solid var(--border);text-align:center}
+.stat-cell:last-child{border-right:none}
+.stat-val{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--text);display:block;margin-bottom:4px;letter-spacing:-.02em}
+.stat-label{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+
+/* CTA */
+.cta-section{text-align:center;padding:100px 40px;background:linear-gradient(180deg,rgba(255,184,0,.04) 0%,transparent 100%);border-top:1px solid rgba(255,184,0,.1)}
+.cta-badge{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--amd);background:rgba(237,28,36,.08);border:1px solid rgba(237,28,36,.2);padding:5px 14px;border-radius:4px;display:inline-block;margin-bottom:20px;letter-spacing:.08em}
+.cta-h2{font-size:clamp(32px,4vw,52px);font-weight:900;letter-spacing:-.03em;margin-bottom:14px}
+.cta-h2 em{font-style:normal;color:var(--gold)}
+.cta-sub{font-size:17px;color:var(--dim);max-width:520px;margin:0 auto 36px;line-height:1.7}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cta-detail{font-family:var(--mono);font-size:10px;color:var(--mute);margin-top:20px;letter-spacing:.04em}
+
+/* FOOTER */
+footer{background:var(--panel);border-top:1px solid var(--border);padding:28px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.footer-left{font-family:var(--mono);font-size:12px}
+.footer-logo{color:var(--gold);font-weight:700;margin-bottom:3px}
+.footer-meta{color:var(--mute)}
+.footer-right{font-family:var(--mono);font-size:10px;color:var(--mute);text-align:right;line-height:1.8}
+
+/* INLINE BADGE */
+.badge{font-family:var(--mono);font-size:8px;font-weight:700;padding:2px 7px;border-radius:3px;border:1px solid;display:inline-block;letter-spacing:.06em}
+
+/* DIVIDER */
+hr{border:none;border-top:1px solid var(--border);margin:0}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">InferPulse<span>™</span></div>
+  <div class="nav-links">
+    <a href="#wei">WEI</a>
+    <a href="#behavioral">Behavioral</a>
+    <a href="#council">Council</a>
+    <a href="#compliance">Compliance</a>
+    <a href="#amd">AMD Native</a>
+  </div>
+  <a href="mailto:vyasa.murthy@venture-vertex.com?subject=InferPulse Demo - AMD Advancing AI" class="nav-cta">Request Demo</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="reveal">
+      <div class="hero-eyebrow">AMD AI Factory Intelligence</div>
+      <h1 class="hero-h1">Does your<br>AMD factory<br><em>pay?</em></h1>
+      <p class="hero-sub">InferPulse measures the economic output of every AI inference microservice on your AMD cluster. Not utilization. Not throughput. Value per dollar, every 5 seconds.</p>
+      <div class="hero-btns">
+        <a href="mailto:vyasa.murthy@venture-vertex.com?subject=InferPulse Demo Request - AMD Advancing AI" class="btn-gold">Request Demo at AMD Advancing AI</a>
+        <a href="https://inferpulse.live" class="btn-outline">Live Platform →</a>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="wei-card">
+        <div class="wei-live-badge"><div class="wei-live-dot"></div>FACTORY · LIVE</div>
+        <div class="wei-number-row">
+          <div class="wei-big" id="heroWei" style="color:var(--amber)">1.14</div>
+          <div class="wei-label-col">
+            <div class="wei-label">Workload Economic Index</div>
+            <div class="wei-grade" style="color:var(--blue)">GRADE B · MAINTAIN</div>
+          </div>
+        </div>
+        <div class="portfolio-mini">
+          <div class="port-cell" style="border-color:rgba(0,255,136,.25)"><div class="port-cell-label" style="color:var(--green)">SCALE</div><div class="port-cell-count" style="color:var(--green)">3</div></div>
+          <div class="port-cell" style="border-color:rgba(14,165,233,.25)"><div class="port-cell-label" style="color:var(--blue)">MAINTAIN</div><div class="port-cell-count" style="color:var(--blue)">5</div></div>
+          <div class="port-cell" style="border-color:rgba(245,158,11,.25)"><div class="port-cell-label" style="color:var(--amber)">OPTIMIZE</div><div class="port-cell-count" style="color:var(--amber)">3</div></div>
+          <div class="port-cell" style="border-color:rgba(255,68,85,.25)"><div class="port-cell-label" style="color:var(--red)">KILL</div><div class="port-cell-count" style="color:var(--red)">1</div></div>
+        </div>
+        <div class="aims-strip" id="aimsStrip"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- WEI CONCEPT -->
+<section id="wei">
+  <div class="reveal"><div class="eyebrow">The Core Metric</div></div>
+  <div class="two-col">
+    <div class="reveal">
+      <h2 class="section-title">Workload<br>Economic Index</h2>
+      <p class="section-sub">WEI is value divided by cost — computed for every AIM on your AMD cluster every 5 seconds. Below 1.0 you are losing money. Above 1.4 you are in the Scale zone.</p>
+      <div class="feature-list">
+        <div class="feature-item"><div class="feature-dot"></div><div class="feature-text"><strong>Scale (WEI ≥ 1.4)</strong> — increase GPU allocation. Highest value-per-dollar in your factory.</div></div>
+        <div class="feature-item"><div class="feature-dot"></div><div class="feature-text"><strong>Maintain (1.0–1.4)</strong> — stable positive economics. Monitor weekly. No action required.</div></div>
+        <div class="feature-item"><div class="feature-dot"></div><div class="feature-text"><strong>Optimize (0.6–1.0)</strong> — declining WEI. Behavioral drift is likely eroding value. Investigate.</div></div>
+        <div class="feature-item"><div class="feature-dot"></div><div class="feature-text"><strong>Kill (&lt;0.6)</strong> — negative economics. Every hour costs more than it produces. Suspend immediately.</div></div>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-1">
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:28px;font-family:var(--mono)">
+        <div style="font-size:9px;color:var(--dim);letter-spacing:.12em;margin-bottom:20px">WEI FORMULA</div>
+        <div style="font-size:26px;font-weight:700;color:var(--gold);text-align:center;margin-bottom:20px;line-height:1.6">Value Score<br>──────────<br>Cost Score</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);border-radius:5px">
+            <span style="font-size:11px;color:var(--teal)">Value Score</span>
+            <span style="font-size:14px;font-weight:700;color:var(--teal)" id="valueScore">$340/hr</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(255,68,85,.06);border:1px solid rgba(255,68,85,.2);border-radius:5px">
+            <span style="font-size:11px;color:var(--red)">Cost Score</span>
+            <span style="font-size:14px;font-weight:700;color:var(--red)" id="costScore">$298/hr</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);border-radius:5px">
+            <span style="font-size:11px;color:var(--green)">WEI</span>
+            <span style="font-size:16px;font-weight:700;color:var(--green)" id="weiFormula">1.14</span>
+          </div>
+          <div style="font-size:10px;color:var(--dim);text-align:center;margin-top:8px;line-height:1.7">Updated every 5 seconds across all AIMs.<br>Integrates drift, SLA status, GPU cost, and industry value model.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- BEHAVIORAL GOVERNANCE -->
+<div class="full-bleed" id="behavioral">
+  <div class="inner">
+    <div class="reveal"><div class="eyebrow">Behavioral Governance</div></div>
+    <div class="two-col-flip">
+      <div class="reveal">
+        <div class="drift-panel">
+          <div class="drift-panel-label">AIM BEHAVIORAL DRIFT — 6 CUSUM DIMENSIONS</div>
+          <div class="d-row"><div class="d-label">Response Pattern</div><div class="d-track"><div class="d-fill" data-width="72" style="background:var(--red)"></div></div><div class="d-val" style="color:var(--red)">72%</div></div>
+          <div class="d-row"><div class="d-label">Token Distribution</div><div class="d-track"><div class="d-fill" data-width="48" style="background:var(--amber)"></div></div><div class="d-val" style="color:var(--amber)">48%</div></div>
+          <div class="d-row"><div class="d-label">Confidence Traj.</div><div class="d-track"><div class="d-fill" data-width="28" style="background:var(--green)"></div></div><div class="d-val" style="color:var(--green)">28%</div></div>
+          <div class="d-row"><div class="d-label">Cross-Session</div><div class="d-track"><div class="d-fill" data-width="19" style="background:var(--green)"></div></div><div class="d-val" style="color:var(--green)">19%</div></div>
+          <div class="d-row"><div class="d-label">Output Length</div><div class="d-track"><div class="d-fill" data-width="55" style="background:var(--amber)"></div></div><div class="d-val" style="color:var(--amber)">55%</div></div>
+          <div class="d-row"><div class="d-label">Semantic Sim.</div><div class="d-track"><div class="d-fill" data-width="14" style="background:var(--green)"></div></div><div class="d-val" style="color:var(--green)">14%</div></div>
+          <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+            <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px">
+              <span style="color:var(--dim)">AIM DRIFT SCORE</span>
+              <span style="color:var(--red);font-weight:700">HIGH RISK</span>
+            </div>
+            <div style="background:rgba(255,255,255,.04);border-radius:3px;height:5px;margin-top:6px;overflow:hidden">
+              <div style="width:64%;height:100%;background:var(--red);border-radius:3px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <h2 class="section-title">6-Dimension<br>Drift Engine</h2>
+        <p class="section-sub">CUSUM statistical process control on six behavioral dimensions. Drift in any dimension degrades WEI in real time — before anyone notices the degradation in outputs.</p>
+        <div class="feature-list">
+          <div class="feature-item"><div class="feature-dot"></div><div class="feature-text"><strong>InferPulse Score™</strong> — six weighted dimensions: behavioral integrity (35%), instruction governance (20%), hardware reliability (15%), inference performance (12%), compliance coverage (10%), session integrity (8%).</div></div>
+          <div class="feature-item"><div class="feature-dot"></div><div class="feature-text"><strong>SLA Impact</strong> — TTFT and TPOT breach detection with dollar impact per AIM. Shows which AIM is costing you money in SLA penalties.</div></div>
+          <div class="feature-item"><div class="feature-dot"></div><div class="feature-text"><strong>HITL Escalation</strong> — human-in-the-loop workflow triggers on behavioral deviation thresholds per industry governance profile.</div></div>
+          <div class="feature-item"><div class="feature-dot"></div><div class="feature-text"><strong>Helios Overlay</strong> — AMD Helios rack-scale power data correlated with WEI. Nine rack economic states from Optimal to Critical Waste, visible on the same axis.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FINANCIAL COUNCIL -->
+<section id="council">
+  <div class="reveal"><div class="eyebrow">Financial Council</div></div>
+  <div class="two-col">
+    <div class="reveal">
+      <h2 class="section-title">Eight algorithms.<br>One verdict.</h2>
+      <p class="section-sub">Eight independent financial algorithms each compute WEI through a different theoretical lens. A weighted ensemble combines them into a single WEI with a 95% confidence interval.</p>
+      <div class="feature-list">
+        <div class="feature-item"><div class="feature-dot"></div><div class="feature-text"><strong>CAPM</strong> — treats AIM WEI like a financial asset. High drift = high beta = higher risk premium required.</div></div>
+        <div class="feature-item"><div class="feature-dot"></div><div class="feature-text"><strong>DCF Lifecycle</strong> — discounts future value delivery using drift as the decay rate. Anchors WEI to the 30-day time-averaged reality, not the spot reading.</div></div>
+        <div class="feature-item"><div class="feature-dot"></div><div class="feature-text"><strong>Monte Carlo</strong> — 10,000 stochastic paths with mean reversion. Returns WEI distribution: P5, P25, P75, P95, and probability of staying above break-even.</div></div>
+        <div class="feature-item"><div class="feature-dot"></div><div class="feature-text"><strong>Multi-Factor Decomposition</strong> — separates WEI into alpha (genuine value above market) vs systematic beta. Alpha is the only number worth paying for.</div></div>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-1">
+      <div class="council-panel">
+        <div class="council-label">ENSEMBLE WEI — 8 ALGORITHM SCATTER · 95% CONFIDENCE INTERVAL</div>
+        <div class="axis-container">
+          <div class="axis-line">
+            <div class="axis-dots">
+              <div class="a-ci" id="ciBar" style="left:18%;width:27%"></div>
+              <div class="a-dot" id="d1" style="left:31%;border-color:#00D4FF"></div>
+              <div class="a-dot" id="d2" style="left:55%;border-color:#8B5CF6"></div>
+              <div class="a-dot" id="d3" style="left:53%;border-color:#00FF88"></div>
+              <div class="a-dot" id="d4" style="left:34%;border-color:#FFB800"></div>
+              <div class="a-dot" id="d5" style="left:29%;border-color:#FF4455"></div>
+              <div class="a-dot" id="d6" style="left:49%;border-color:#06D6A0"></div>
+              <div class="a-dot" id="d7" style="left:54%;border-color:#F59E0B"></div>
+              <div class="a-dot" id="d8" style="left:52%;border-color:#E879F9"></div>
+              <div class="a-ensemble" id="ensemble" style="left:45%"></div>
+            </div>
+          </div>
+          <div class="axis-labels"><span>0.0</span><span>0.5</span><span style="color:var(--gold)">0.68</span><span>1.0</span><span>1.5</span></div>
+        </div>
+        <div class="agents-grid">
+          <div class="agent-tag"><div class="agent-color" style="background:#00D4FF"></div>CAPM — Alexandra Chen, CFA</div>
+          <div class="agent-tag"><div class="agent-color" style="background:#8B5CF6"></div>Black-Scholes — Marcus Okafor</div>
+          <div class="agent-tag"><div class="agent-color" style="background:#00FF88"></div>Sharpe — James Whitfield</div>
+          <div class="agent-tag"><div class="agent-color" style="background:#FFB800"></div>DCF Lifecycle — Elena Vasquez</div>
+          <div class="agent-tag"><div class="agent-color" style="background:#FF4455"></div>VaR (95%) — Dr. Priya Nair</div>
+          <div class="agent-tag"><div class="agent-color" style="background:#06D6A0"></div>Ornstein-Uhlenbeck — Dr. Chen Wei</div>
+          <div class="agent-tag"><div class="agent-color" style="background:#F59E0B"></div>Multi-Factor — Sarah Okonkwo</div>
+          <div class="agent-tag"><div class="agent-color" style="background:#E879F9"></div>Monte Carlo 10k — Prof. Kapoor</div>
+        </div>
+        <div class="ensemble-result">ENSEMBLE WEI 0.681 &nbsp;·&nbsp; 95% CI [0.36, 0.92] &nbsp;·&nbsp; CONSENSUS: OPTIMIZE</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- COMPLIANCE -->
+<div class="full-bleed" id="compliance">
+  <div class="inner">
+    <div class="reveal">
+      <div class="eyebrow">Compliance Intelligence</div>
+      <h2 class="section-title">Ten industries. Twenty-plus frameworks.<br>Governance aligned to the specific customer.</h2>
+      <p class="section-sub">Every customer gets a compliance posture derived from live AIM behavioral data — not static assertions. Drift, WEI, SLA, and evidence chain all contribute to framework scores.</p>
+    </div>
+    <div class="industries-grid reveal">
+      <div class="industry-card"><div class="ind-icon">BNK</div><div class="ind-name">Banking</div><div class="ind-fws">SR 26-2 · BCBS 239 · DORA · EU AI Act</div></div>
+      <div class="industry-card"><div class="ind-icon">IB</div><div class="ind-name">Investment Banking</div><div class="ind-fws">MiFID II · SR 26-2 · BCBS 239 · DORA</div></div>
+      <div class="industry-card"><div class="ind-icon">HC</div><div class="ind-name">Healthcare</div><div class="ind-fws">HIPAA · FDA SaMD PCCP · EU MDR · EU AI Act</div></div>
+      <div class="industry-card"><div class="ind-icon">GOV</div><div class="ind-name">Government / Sovereign</div><div class="ind-fws">DPDP · MAS TRM · APRA CPG234 · FISMA</div></div>
+      <div class="industry-card"><div class="ind-icon">INS</div><div class="ind-name">Insurance</div><div class="ind-fws">Solvency II · NAIC AI · NJ DOBI 25-03</div></div>
+      <div class="industry-card"><div class="ind-icon">TECH</div><div class="ind-name">Technology</div><div class="ind-fws">ISO 42001 · SOC 2 · GDPR · EU AI Act</div></div>
+      <div class="industry-card"><div class="ind-icon">NRG</div><div class="ind-name">Energy & Utilities</div><div class="ind-fws">NERC CIP · IEC 62443 · EU AI Act</div></div>
+      <div class="industry-card"><div class="ind-icon">LEG</div><div class="ind-name">Legal</div><div class="ind-fws">GDPR · EU AI Act · ISO 42001 · SOC 2</div></div>
+      <div class="industry-card"><div class="ind-icon">FS</div><div class="ind-name">Financial Services</div><div class="ind-fws">PCI DSS · DORA · SR 26-2 · SOC 2</div></div>
+    </div>
+    <div class="reveal" style="margin-top:28px">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--dim)">EACH CUSTOMER GETS</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <span class="badge" style="color:var(--purple);border-color:rgba(139,92,246,.3)">Industry governance profile</span>
+          <span class="badge" style="color:var(--purple);border-color:rgba(139,92,246,.3)">Drift threshold per framework</span>
+          <span class="badge" style="color:var(--purple);border-color:rgba(139,92,246,.3)">Evidence retention period</span>
+          <span class="badge" style="color:var(--purple);border-color:rgba(139,92,246,.3)">HITL escalation rules</span>
+          <span class="badge" style="color:var(--purple);border-color:rgba(139,92,246,.3)">Provisioning template</span>
+          <span class="badge" style="color:var(--purple);border-color:rgba(139,92,246,.3)">AMD feed endpoints</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AMD NATIVE -->
+<section id="amd">
+  <div class="reveal"><div class="eyebrow">AMD Native</div></div>
+  <div class="reveal">
+    <h2 class="section-title">Not adapted for AMD.<br>Built for it.</h2>
+    <p class="section-sub">Six AMD hardware telemetry feeds plug directly into the WEI computation, Helios overlay, and drift engine. No generic GPU abstraction layer.</p>
+  </div>
+  <div class="feeds-grid reveal">
+    <div class="feed-card"><div class="feed-chip">AMD-SMI</div><div class="feed-name">AMD System Management</div><div class="feed-desc">GPU utilization, temperature, power draw, VRAM — direct AMD-SMI integration, not OS-level polling.</div></div>
+    <div class="feed-card"><div class="feed-chip">ROCm</div><div class="feed-name">ROCm Performance Metrics</div><div class="feed-desc">Platform performance counters, compute occupancy, memory bandwidth, kernel efficiency from ROCm 7.2.1.</div></div>
+    <div class="feed-card"><div class="feed-chip">HELIOS</div><div class="feed-name">AMD Helios Power Management</div><div class="feed-desc">Rack-scale power management, thermal zones, OAM power caps — correlated with WEI on the same axis.</div></div>
+    <div class="feed-card"><div class="feed-chip">INSTINCT FABRIC</div><div class="feed-name">Infinity Fabric / XGMI</div><div class="feed-desc">XGMI bandwidth matrix visualization. Click any GPU cell in the Cluster L2 view to see the AIM running on it.</div></div>
+    <div class="feed-card"><div class="feed-chip">KFD</div><div class="feed-name">KFD Process Monitor</div><div class="feed-desc">Kernel Fusion Driver process-level GPU assignment. Maps physical GPU resources to logical AIMs for precise cost attribution.</div></div>
+    <div class="feed-card"><div class="feed-chip">EAI SUITE</div><div class="feed-name">AMD Enterprise AI Integration</div><div class="feed-desc">AMD Enterprise AI Suite monitoring hooks for behavioral governance. AITER kernel mode distribution per node.</div></div>
+  </div>
+</section>
+
+<hr>
+
+<!-- REPORTS -->
+<div class="full-bleed">
+  <div class="inner">
+    <div class="reveal"><div class="eyebrow">Reports</div></div>
+    <div class="reveal">
+      <h2 class="section-title">Seven reports for every<br>stakeholder in the room.</h2>
+      <p class="section-sub">Every report opens in Chrome, prints to PDF in one click. No placeholder content — live factory data throughout.</p>
+    </div>
+    <div class="reports-grid reveal">
+      <div class="report-card" style="background:rgba(27,79,138,.08);border-color:rgba(27,79,138,.3)"><div class="report-icon" style="color:#1B4F8A">BOARD PACK</div><div class="report-name">Factory Economics Board Pack</div><div class="report-who">For the CIO and board</div></div>
+      <div class="report-card" style="background:rgba(27,107,58,.08);border-color:rgba(27,107,58,.3)"><div class="report-icon" style="color:#1B6B3A">ROI REPORT</div><div class="report-name">WEI Return on Investment</div><div class="report-who">For the CFO</div></div>
+      <div class="report-card" style="background:rgba(255,184,0,.06);border-color:rgba(255,184,0,.25)"><div class="report-icon" style="color:var(--gold)">TW ROI</div><div class="report-name">TensorWave 8,192 MI325X</div><div class="report-who">For neocloud operators</div></div>
+      <div class="report-card" style="background:rgba(14,165,233,.06);border-color:rgba(14,165,233,.25)"><div class="report-icon" style="color:var(--blue)">COMPLIANCE CERT</div><div class="report-name">EU AI Act Certificate</div><div class="report-who">For the CISO</div></div>
+      <div class="report-card" style="background:rgba(139,92,246,.06);border-color:rgba(139,92,246,.25)"><div class="report-icon" style="color:var(--purple)">AIM AUDIT</div><div class="report-name">Behavioral Audit Report</div><div class="report-who">For compliance teams</div></div>
+      <div class="report-card" style="background:rgba(255,68,85,.06);border-color:rgba(255,68,85,.25)"><div class="report-icon" style="color:var(--red)">CONFLICT REPORT</div><div class="report-name">Causal Chain Investigation</div><div class="report-who">For risk and legal</div></div>
+      <div class="report-card" style="background:rgba(6,214,160,.06);border-color:rgba(6,214,160,.25)"><div class="report-icon" style="color:#06D6A0">PROVISIONING</div><div class="report-name">Customer Onboarding Template</div><div class="report-who">For customer delivery</div></div>
+      <div class="report-card" style="background:rgba(139,92,246,.06);border-color:rgba(139,92,246,.25)"><div class="report-icon" style="color:var(--purple)">FINANCIAL COUNCIL</div><div class="report-name">Ensemble WEI Verdict</div><div class="report-who">For engineering and finance</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<section>
+  <div class="stats-bar reveal">
+    <div class="stat-cell"><span class="stat-val">8,192</span><div class="stat-label">MI325X GPUs</div></div>
+    <div class="stat-cell"><span class="stat-val">12</span><div class="stat-label">AIMs monitored</div></div>
+    <div class="stat-cell"><span class="stat-val">5s</span><div class="stat-label">WEI update cycle</div></div>
+    <div class="stat-cell"><span class="stat-val">20+</span><div class="stat-label">Compliance frameworks</div></div>
+    <div class="stat-cell"><span class="stat-val">8</span><div class="stat-label">Financial algorithms</div></div>
+    <div class="stat-cell"><span class="stat-val">10</span><div class="stat-label">Industry profiles</div></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-badge reveal">AMD ADVANCING AI · JULY 22–23, 2026 · MOSCONE WEST</div>
+  <h2 class="cta-h2 reveal">Meet us at<br><em>AMD Advancing AI</em></h2>
+  <p class="cta-sub reveal">Bring your GPU count and workload mix. Thirty minutes and you leave with a factory economics number for your specific AMD environment.</p>
+  <div class="cta-btns reveal">
+    <a href="mailto:vyasa.murthy@venture-vertex.com?subject=InferPulse Meeting Request - AMD Advancing AI July 22-23" class="btn-gold" style="font-size:13px;padding:13px 28px">Schedule a Meeting →</a>
+    <a href="https://inferpulse.live" class="btn-outline" style="font-size:13px;padding:13px 28px">View Live Platform</a>
+  </div>
+  <div class="cta-detail reveal">Vyasa Murthy · Managing Partner, Venture Vertex LLC · vyasa.murthy@venture-vertex.com</div>
+</div>
+
+<footer>
+  <div class="footer-left">
+    <div class="footer-logo">InferPulse™</div>
+    <div class="footer-meta">AMD AI Factory Intelligence & Workload Economics · Venture Vertex LLC</div>
+  </div>
+  <div class="footer-right">
+    inferpulse.live<br>
+    AMD Advancing AI · July 22–23, 2026
+  </div>
+</footer>
+
+<script>
+const AIMS = [
+  {name:"llama-finance-prod", wei:1.62, color:"#00FF88"},
+  {name:"phi-legal-ops",      wei:1.41, color:"#00FF88"},
+  {name:"mixtral-itsm",       wei:1.38, color:"#00FF88"},
+  {name:"llama-risk-mgmt",    wei:1.19, color:"#0EA5E9"},
+  {name:"codestral-devops",   wei:1.14, color:"#0EA5E9"},
+  {name:"mistral-support",    wei:1.07, color:"#0EA5E9"},
+  {name:"mixtral-trading",    wei:0.89, color:"#F59E0B"},
+  {name:"falcon-research",    wei:0.77, color:"#F59E0B"},
+  {name:"mistral-legacy-int", wei:0.42, color:"#FF4455"},
+]
+
+function buildAIMStrip() {
+  const el = document.getElementById("aimsStrip")
+  if (!el) return
+  el.innerHTML = AIMS.slice(0,5).map(a => `
+    <div class="aim-row">
+      <div class="aim-name">${a.name}</div>
+      <div class="aim-track"><div class="aim-fill" data-target="${Math.min(a.wei/2.2*100,100)}" style="background:${a.color}"></div></div>
+      <div class="aim-wei" style="color:${a.color}">${a.wei.toFixed(2)}</div>
+    </div>`).join("")
+  setTimeout(() => {
+    el.querySelectorAll(".aim-fill").forEach(f => {
+      f.style.width = f.dataset.target + "%"
+    })
+  }, 600)
+}
+buildAIMStrip()
+
+let weiBase = 1.14
+setInterval(() => {
+  weiBase = Math.max(0.85, Math.min(1.65, weiBase + (Math.random()-0.48)*0.004))
+  const el = document.getElementById("heroWei")
+  if (el) {
+    el.textContent = weiBase.toFixed(2)
+    el.style.color = weiBase >= 1.4 ? "#00FF88" : weiBase >= 1.0 ? "#F59E0B" : "#FF4455"
+  }
+  const wf = document.getElementById("weiFormula")
+  if (wf) wf.textContent = weiBase.toFixed(2)
+  const vs = document.getElementById("valueScore")
+  if (vs) vs.textContent = "$" + Math.round(weiBase * 298) + "/hr"
+}, 2000)
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("visible")
+
+      if (entry.target.querySelector(".d-fill")) {
+        setTimeout(() => {
+          entry.target.querySelectorAll(".d-fill").forEach(f => {
+            f.style.width = f.dataset.width + "%"
+          })
+        }, 200)
+        observer.unobserve(entry.target)
+      }
+
+      const dots = entry.target.querySelectorAll(".a-dot")
+      if (dots.length) {
+        dots.forEach((d, i) => setTimeout(() => d.classList.add("shown"), 200 + i*120))
+        const en = entry.target.querySelector(".a-ensemble")
+        const ci = entry.target.querySelector(".a-ci")
+        if (en) setTimeout(() => en.classList.add("shown"), 1200)
+        if (ci) setTimeout(() => ci.classList.add("shown"), 800)
+        observer.unobserve(entry.target)
+      }
+    }
+  })
+}, { threshold: 0.15 })
+
+document.querySelectorAll(".reveal").forEach(el => observer.observe(el))
+</script>
+</body>
+</html>
