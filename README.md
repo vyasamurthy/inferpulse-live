@@ -2,7 +2,7 @@
 
 InferPulse — AMD AI factory intelligence and workload economics.
 
-**Current version: v1.1.0**
+**Current version: v1.2.0**
 
 `index.html` is the deployed site. It is fully self-contained: all CSS, JavaScript and
 the Venture Vertex logo are embedded, and the only external dependency is Google Fonts.
@@ -16,7 +16,7 @@ starts from the latest version here, not from a local copy.
 | File | Purpose |
 |---|---|
 | `index.html` | Deployed site |
-| `inferpulse-website-v1.1.0.html` | Versioned snapshot of the same build |
+| `inferpulse-website-v1.2.0.html` | Versioned snapshot of the same build |
 
 ## Deploy
 

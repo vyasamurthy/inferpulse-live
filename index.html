@@ -248,6 +248,16 @@ footer{background:var(--navy-deep);color:var(--slate-lt);padding:clamp(48px,6vw,
 .foot-bot a:hover{color:#fff}
 
 /* ---------- responsive ---------- */
+.hitl-flow.five{grid-template-columns:repeat(5,minmax(0,1fr));gap:18px}
+@media(max-width:1000px){.hitl-flow.five{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}}
+@media(max-width:700px){
+  table.tb.stack,table.tb.stack tbody,table.tb.stack tr,table.tb.stack td{display:block}
+  table.tb.stack tr:first-child{display:none}
+  table.tb.stack tr{padding:14px 0;border-bottom:1px solid var(--rule-soft)}
+  table.tb.stack td{border:0;padding:3px 0}
+  table.tb.stack td:first-child{white-space:normal}
+  table.tb.stack4 td:last-child{font-family:"IBM Plex Mono";font-size:12px;color:var(--gold-deep)}
+}
 @media(max-width:1000px){
   .hero-grid{grid-template-columns:1fr;gap:38px}
   .act{grid-template-columns:1fr;gap:16px}
@@ -330,8 +340,9 @@ body.locked{overflow:hidden}
     <button class="burger" id="burger" aria-expanded="false" aria-controls="nl">Menu</button>
     <nav class="nav-links" id="nl">
       <a href="#problem">The problem</a>
+      <a href="#platform">Platform</a>
       <a href="#wei">WEI</a>
-      <a href="#capabilities">Capabilities</a>
+      <a href="#longcontext">Long context</a>
       <a href="#proof">Live proof</a>
       <a href="#trust">Deployment</a>
       <a href="#insights">Insights</a>
@@ -394,6 +405,38 @@ body.locked{overflow:hidden}
       <div class="reveal"><b class="mono" data-run="6">0</b><span>Behavioural drift dimensions<br><i>CUSUM statistical process control</i></span></div>
       <div class="reveal"><b class="mono" data-run="8">0</b><span>Native AMD telemetry feeds<br><i>into the economics, not a side panel</i></span></div>
       <div class="reveal"><b class="mono" data-run="7">0</b><span>Board and CFO-ready reports<br><i>no placeholder content, real factory data</i></span></div>
+    </div>
+  </div>
+</section>
+
+<section class="pad" style="background:var(--paper-2)" id="platform">
+  <div class="wrap act">
+    <div class="act-tag reveal">THE PLATFORM<br>FIVE LAYERS</div>
+    <div style="width:100%">
+      <h2 class="reveal">One platform, from the GPU to the decision.</h2>
+      <div class="body" style="margin-top:24px">
+        <p class="reveal">WEI is the verdict. It sits on top of four other layers, because a ratio is only as good as what feeds it. InferPulse watches the fleet, probes every model endpoint, prices each workload against its GPUs, records what models and agents did, and connects to an AMD estate from a single address.</p>
+        <p class="reveal">Each layer answers one question that an operator, a CFO or an auditor asks. Together they take a GPU hour from a telemetry reading to a decision with the evidence attached.</p>
+      </div>
+      <table class="tb stack stack4 reveal">
+        <tr><th>Layer</th><th>The question</th><th>What it does</th><th>Status</th></tr>
+        <tr><td>1 &middot; Infrastructure</td><td>Is the fleet healthy?</td><td>GPUs, racks, power and thermals in one view, with thresholds tuned per GPU architecture and a live telemetry feed per GPU.</td><td>Live on MI300X</td></tr>
+        <tr><td>2 &middot; Performance</td><td>Is each model fast enough?</td><td>Live probes on any OpenAI-compatible endpoint: time to first token against a target, CUSUM drift detection, and cost per token on every call.</td><td>Live on MI300X</td></tr>
+        <tr><td>3 &middot; Economics</td><td>Is each workload worth its GPUs?</td><td>WEI per workload, Distance to Kill, an Efficient Frontier that ranks workloads by return per GPU dollar, and a Claude-powered Financial Council review that writes the finance-ready explanation.</td><td>Live on MI300X</td></tr>
+        <tr><td>4 &middot; Governance</td><td>Can we prove control?</td><td>692 governance frameworks mapped to the controls InferPulse observes, and a SHA-256 hash-chained audit trail produced while workloads run. Mappings support audit preparation. They are not legal advice or certification.</td><td>Built</td></tr>
+        <tr><td>5 &middot; AMD-native</td><td>How fast can it connect?</td><td>One IP address, one click, five feeds. Every ROCm improvement is expressed as a change in WEI, so a software upgrade has a dollar value.</td><td>3 of 5 feeds live. Counters and advisors are scaffolds until connected to a node.</td></tr>
+      </table>
+      <div class="hitl reveal">
+        <div class="hitl-t mono">HOW IT WORKS &middot; CONNECT TO DECISION IN FIVE STEPS</div>
+        <div class="hitl-flow five">
+          <div><b>01 &middot; CONNECT</b><span>Point InferPulse at a node's IP address. Feeds register in one click.</span></div>
+          <div><b>02 &middot; OBSERVE</b><span>GPU telemetry and live probes on every model endpoint.</span></div>
+          <div><b>03 &middot; VALUE</b><span>Each workload gets a WEI, a cost per token and a drift alert.</span></div>
+          <div><b>04 &middot; GOVERN</b><span>Every decision lands in a hash-chained audit trail, mapped to frameworks.</span></div>
+          <div><b>05 &middot; DECIDE</b><span>Scale, maintain, optimise or kill, with the evidence attached.</span></div>
+        </div>
+      </div>
+      <p class="reveal mono" style="margin-top:20px;font-size:12.5px;color:var(--slate-lt)">Status as of November 2026. The connect, observe and value steps have run on a live AMD Instinct MI300X.</p>
     </div>
   </div>
 </section>
@@ -482,6 +525,45 @@ body.locked{overflow:hidden}
           <li><b>Patent pending</b> on the scoring method</li>
         </ul>
       </article>
+    </div>
+  </div>
+</section>
+
+<section class="pad" id="longcontext">
+  <div class="wrap act">
+    <div class="act-tag reveal">LONG CONTEXT<br>CACHE TIERS</div>
+    <div style="width:100%">
+      <h2 class="reveal">Long-context agents pay twice for the same context. Does the tier that fixes it pay for itself?</h2>
+      <div class="body" style="margin-top:24px">
+        <p class="reveal">An agent re-reads a long context on every turn. If its KV cache was evicted from GPU memory, the GPU recomputes the prefill and the buyer pays for the same work again. Cache tiers in CPU memory, NVMe or networked storage keep the cache and reload it.</p>
+        <p class="reveal">Whether a tier pays depends on context length, hit rate and what the tier costs. Vendors tend to publish the first two at their best point and rarely the third. In one storage vendor's own published test, offload cut time to first token at 235K context from 11,223 ms to 837 ms, and slowed a 4K context from 91 ms to 113&ndash;129 ms. A tier is not good or bad in general. It has to be measured on your traffic.</p>
+        <p class="reveal">InferPulse extends layers 2 and 3 to do exactly that, and keeps the method with the number.</p>
+      </div>
+      <table class="tb stack reveal">
+        <tr><th>Capability</th><th>What it does</th></tr>
+        <tr><td>Engine adapters</td><td>Read vLLM and SGLang metrics, including offload and HiCache counters.</td></tr>
+        <tr><td>KV capacity planner</td><td>Agents per node at a given context length, from the model's attention design. Labelled as an estimate.</td></tr>
+        <tr><td>Price-normalised comparison</td><td>Cost per million tokens across GPUs, using prices you supply. No default GPU price is ever assumed.</td></tr>
+        <tr><td>Cache-tier ROI</td><td>Net value, break-even share and payback for a CPU, NVMe or storage tier.</td></tr>
+        <tr><td>Cache probe</td><td>Cold against warm requests after eviction, with the serving tier read from counter changes.</td></tr>
+        <tr><td>Evidence discipline</td><td>Every figure is labelled live, estimate or calculated, and results are recorded on a hash-chained receipt.</td></tr>
+      </table>
+      <div class="hitl reveal">
+        <div class="hitl-t mono">HOW A CACHE TIER IS MEASURED</div>
+        <div class="hitl-flow">
+          <div><b>01 &middot; COLD</b><span>Send distinct long prompts and record time to first token for each.</span></div>
+          <div><b>02 &middot; EVICT</b><span>Send filler traffic, sized from the engine's KV capacity, until the GPU cache drops the prompts.</span></div>
+          <div><b>03 &middot; WARM</b><span>Resend each prompt. Counter changes show whether the GPU, host memory or storage served it.</span></div>
+          <div><b>04 &middot; ATTRIBUTE</b><span>Speed-up with a significance test, the break-even context, and a receipt.</span></div>
+        </div>
+      </div>
+      <div class="strip">
+        <div class="reveal"><b>40%</b><span>Share of prompt tokens served from the tier</span></div>
+        <div class="reveal"><b>0.2 node</b><span>GPU time freed at 10,000 prompt tokens a second</span></div>
+        <div class="reveal"><b>$0.20</b><span>Net value per hour after a $3 tier cost</span></div>
+        <div class="reveal"><b>37.5%</b><span>Break-even share. Below it the tier loses money.</span></div>
+      </div>
+      <p class="reveal mono" style="margin-top:20px;font-size:12.5px;color:var(--slate-lt)">The worked example uses invented inputs to show the arithmetic. It is not a measurement. Status: built. Validation against live vLLM and SGLang deployments is the next milestone.</p>
     </div>
   </div>
 </section>
@@ -676,8 +758,10 @@ body.locked{overflow:hidden}
       <div>
         <h5>PLATFORM</h5>
         <a href="#insights">Insights</a>
+        <a href="#platform">Five layers</a>
         <a href="#wei">The WEI metric</a>
         <a href="#capabilities">Capabilities</a>
+        <a href="#longcontext">Long-context cache tiers</a>
         <a href="#proof">Live on MI300X</a>
         <a href="#trust">Deployment</a>
       </div>
@@ -697,7 +781,7 @@ body.locked{overflow:hidden}
       </div>
     </div>
     <div class="foot-bot">
-      <span>&copy; 2026 Venture Vertex LLC &middot; InferPulse</span>
+      <span>&copy; 2026 Venture Vertex LLC &middot; InferPulse &middot; v1.2.0</span>
       <span class="r"><span>PATENT PENDING</span><span>EU AI ACT</span><span>NIST AI RMF</span>
         <a href="mailto:vyasa.murthy@venture-vertex.com">vyasa.murthy@venture-vertex.com</a>
       </span>
