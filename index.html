@@ -403,7 +403,7 @@ body.locked{overflow:hidden}
     <div class="mbar-grid">
       <div class="reveal"><b class="mono">5s</b><span>Recomputation interval<br><i>every workload, continuously</i></span></div>
       <div class="reveal"><b class="mono" data-run="6">0</b><span>Behavioural drift dimensions<br><i>CUSUM statistical process control</i></span></div>
-      <div class="reveal"><b class="mono" data-run="8">0</b><span>Native AMD telemetry feeds<br><i>into the economics, not a side panel</i></span></div>
+      <div class="reveal"><b class="mono" data-run="5">0</b><span>Native AMD telemetry feeds<br><i>3 live on the MI300X run, feeding the economics</i></span></div>
       <div class="reveal"><b class="mono" data-run="7">0</b><span>Board and CFO-ready reports<br><i>no placeholder content, real factory data</i></span></div>
     </div>
   </div>
@@ -580,7 +580,7 @@ body.locked{overflow:hidden}
       <div class="strip">
         <div class="reveal"><b>MI300X</b><span>AMD Instinct, live instance on AMD Developer Cloud</span></div>
         <div class="reveal"><b>126ms</b><span>Time to first token, measured through vLLM</span></div>
-        <div class="reveal"><b>2.25</b><span>Live WEI on the served workload &mdash; SCALE zone</span></div>
+        <div class="reveal"><b>2.25</b><span>Live WEI on the served workload &mdash; MAINTAIN band (1.5 to 3.0)</span></div>
         <div class="reveal"><b>Grade A</b><span>Factory grade computed from live telemetry</span></div>
       </div>
       <div class="tri reveal" style="margin-top:42px">
@@ -781,7 +781,7 @@ body.locked{overflow:hidden}
       </div>
     </div>
     <div class="foot-bot">
-      <span>&copy; 2026 Venture Vertex LLC &middot; InferPulse &middot; v1.2.0</span>
+      <span>&copy; 2026 Venture Vertex LLC &middot; InferPulse &middot; v1.2.1</span>
       <span class="r"><span>PATENT PENDING</span><span>EU AI ACT</span><span>NIST AI RMF</span>
         <a href="mailto:vyasa.murthy@venture-vertex.com">vyasa.murthy@venture-vertex.com</a>
       </span>
@@ -831,7 +831,7 @@ document.querySelectorAll(".reveal").forEach(function(el){io.observe(el);});
 /* hero instrument stream */
 (function(){
   var box=document.getElementById("queue"),lv=document.getElementById("lv");if(!box)return;
-  var POOL=[{"a": "llm-inference-prod &middot; Qwen3-8B on MI300X", "m": "TTFT 126ms &middot; value 4.82/hr &middot; cost 2.14/hr", "t": "m", "v": "2.25", "k": "SCALE"}, {"a": "rag-retrieval-svc &middot; MI325X cluster 04", "m": "drift clean &middot; SLA held &middot; occupancy 71%", "t": "m", "v": "3.41", "k": "SCALE"}, {"a": "batch-embedding &middot; MI300X node 11", "m": "utilisation 38% &middot; value attribution thin", "t": "h", "v": "1.28", "k": "OPTIMIZE"}, {"a": "summarisation-api &middot; MI325X cluster 02", "m": "TTFT breach 3 of last 10 windows", "t": "h", "v": "1.61", "k": "MAINTAIN"}, {"a": "legacy-classifier &middot; MI300X node 03", "m": "no consumer traffic 9 days &middot; still allocated", "t": "c", "v": "0.42", "k": "KILL"}, {"a": "vision-preprocess &middot; MI355X cluster 01", "m": "XGMI saturation &middot; fabric-bound, not compute-bound", "t": "h", "v": "1.14", "k": "OPTIMIZE"}, {"a": "code-assist-prod &middot; MI325X cluster 07", "m": "behavioural drift 2 dims &middot; value adjusted down", "t": "h", "v": "1.72", "k": "MAINTAIN"}, {"a": "eval-harness &middot; MI300X node 08", "m": "scheduled nightly &middot; idle 18h/day, allocated 24h", "t": "c", "v": "0.61", "k": "KILL"}];
+  var POOL=[{"a": "llm-inference-prod &middot; Qwen3-8B on MI300X", "m": "TTFT 126ms &middot; value 4.82/hr &middot; cost 2.14/hr", "t": "m", "v": "2.25", "k": "MAINTAIN"}, {"a": "rag-retrieval-svc &middot; MI325X cluster 04", "m": "drift clean &middot; SLA held &middot; occupancy 71%", "t": "m", "v": "3.41", "k": "SCALE"}, {"a": "batch-embedding &middot; MI300X node 11", "m": "utilisation 38% &middot; value attribution thin", "t": "h", "v": "1.28", "k": "OPTIMIZE"}, {"a": "summarisation-api &middot; MI325X cluster 02", "m": "TTFT breach 3 of last 10 windows", "t": "h", "v": "1.61", "k": "MAINTAIN"}, {"a": "legacy-classifier &middot; MI300X node 03", "m": "no consumer traffic 9 days &middot; still allocated", "t": "c", "v": "0.42", "k": "KILL"}, {"a": "vision-preprocess &middot; MI355X cluster 01", "m": "XGMI saturation &middot; fabric-bound, not compute-bound", "t": "h", "v": "1.14", "k": "OPTIMIZE"}, {"a": "code-assist-prod &middot; MI325X cluster 07", "m": "behavioural drift 2 dims &middot; value adjusted down", "t": "h", "v": "1.72", "k": "MAINTAIN"}, {"a": "eval-harness &middot; MI300X node 08", "m": "scheduled nightly &middot; idle 18h/day, allocated 24h", "t": "c", "v": "0.61", "k": "KILL"}];
   function add(){
     var s=POOL[(Math.random()*POOL.length)|0];
     var el=document.createElement("div");
